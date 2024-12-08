@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { BoundingBox } from '../models/BoundingBox';
+import { config } from '../config/config';
 
-const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
+export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
   const { topLeftCoordinates, bottomRightCoordinates } = boundingBox;
   return `(${topLeftCoordinates[0]},${topLeftCoordinates[1]}),(${bottomRightCoordinates[0]},${bottomRightCoordinates[1]})`;
 };
 
-const fetchResultsCount = async (boundingBox: BoundingBox): Promise<number> => {
+export const fetchResultsCount = async (boundingBox: BoundingBox): Promise<number> => {
   try {
-    const response = await axios.get('https://api.openchargemap.io/v3/poi', {
+    const response = await axios.get(`${config.OCM_API_BASE_URL}/poi`, {
       params: {
         boundingbox: constructBoundingBoxParam(boundingBox),
         opendata: true,
@@ -23,7 +24,7 @@ const fetchResultsCount = async (boundingBox: BoundingBox): Promise<number> => {
   }
 };
 
-const subdivideBoundingBox = (boundingBox: BoundingBox): BoundingBox[] => {
+export const subdivideBoundingBox = (boundingBox: BoundingBox): BoundingBox[] => {
   const [lat1, lng1] = boundingBox.topLeftCoordinates;
   const [lat2, lng2] = boundingBox.bottomRightCoordinates;
 
