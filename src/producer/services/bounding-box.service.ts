@@ -1,27 +1,9 @@
-import axios from 'axios';
 import { BoundingBox } from '../models/BoundingBox';
-import { config } from '../config/config';
+import { fetchOCMResults } from './ocm.service';
 
 export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
   const { topLeftCoordinates, bottomRightCoordinates } = boundingBox;
   return `(${topLeftCoordinates[0]},${topLeftCoordinates[1]}),(${bottomRightCoordinates[0]},${bottomRightCoordinates[1]})`;
-};
-
-export const fetchResultsCount = async (boundingBox: BoundingBox): Promise<number> => {
-  try {
-    const response = await axios.get(`${config.OCM_API_BASE_URL}/poi`, {
-      params: {
-        boundingbox: constructBoundingBoxParam(boundingBox),
-        opendata: true,
-        compact: true
-      }
-    });
-
-    return response.data.length;
-  } catch (error: any) {
-    console.error(`Error fetching results for bounding box ${JSON.stringify(boundingBox)}: ${error.message}`);
-    return 0;
-  }
 };
 
 export const subdivideBoundingBox = (boundingBox: BoundingBox): BoundingBox[] => {
@@ -51,7 +33,8 @@ export const generateBoundingBoxes = async (
   maxResults: number,
   accumulator: BoundingBox[] = []
 ): Promise<void> => {
-  const resultCount = await fetchResultsCount(boundingBox);
+  const result = await fetchOCMResults(constructBoundingBoxParam(boundingBox));
+  const resultCount = result.length;
 
   if (resultCount <= maxResults) {
     // Add the bounding box to the accumulator if it's within the limit

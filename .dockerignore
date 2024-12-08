@@ -6,4 +6,3 @@ Dockerfile
 .eslintrc.json
 .prettierrc
 .prettierignore
-pnpm-lock.yaml

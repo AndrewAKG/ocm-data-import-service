@@ -1,8 +1,14 @@
+import dotenv from 'dotenv';
+import { connectToDB } from '../common/db-connection';
 import { config } from './config/config';
 import { BoundingBox } from './models/BoundingBox';
 import { generateBoundingBoxes } from './services/bounding-box.service';
 
+dotenv.config();
+
 (async () => {
+  await connectToDB();
+
   const worldBoundingBox: BoundingBox = {
     topLeftCoordinates: [-90, -180],
     bottomRightCoordinates: [90, 180]
