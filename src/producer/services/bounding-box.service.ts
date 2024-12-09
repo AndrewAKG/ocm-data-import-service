@@ -1,89 +1,92 @@
-import { commonConfig } from '../../common/config';
 import { BoundingBox, BoundingBoxModel } from '../models/BoundingBox';
-import { generateDataHash } from '../utils/hashing-utils';
 import { fetchOCMResults } from './ocm.service';
-
-export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
-  const { topLeftCoordinates, bottomRightCoordinates } = boundingBox;
-  return `(${topLeftCoordinates[0]},${topLeftCoordinates[1]}),(${bottomRightCoordinates[0]},${bottomRightCoordinates[1]})`;
-};
-
-export const subdivideBoundingBox = (boundingBox: BoundingBox): BoundingBox[] => {
-  const [lat1, lng1] = boundingBox.topLeftCoordinates;
-  const [lat2, lng2] = boundingBox.bottomRightCoordinates;
-
-  // Decide whether to split horizontally (latitude) or vertically (longitude)
-  const isHorizontalSplit = Math.abs(lat2 - lat1) > Math.abs(lng2 - lng1);
-
-  if (isHorizontalSplit) {
-    const midLat = (lat1 + lat2) / 2;
-    return [
-      { topLeftCoordinates: [lat1, lng1], bottomRightCoordinates: [midLat, lng2] },
-      { topLeftCoordinates: [midLat, lng1], bottomRightCoordinates: [lat2, lng2] }
-    ];
-  } else {
-    const midLng = (lng1 + lng2) / 2;
-    return [
-      { topLeftCoordinates: [lat1, lng1], bottomRightCoordinates: [lat2, midLng] },
-      { topLeftCoordinates: [lat1, midLng], bottomRightCoordinates: [lat2, lng2] }
-    ];
-  }
-};
+import { generateDataHash } from '../utils/hashing-utils';
+import { QueueMessage, QueueService } from '../../common/types/queue';
+import { constructBoundingBoxParam, subdivideBoundingBox } from '../utils/boundingbox-utils';
+import { commonConfig } from '../../common/config/config';
 
 export const generateBoundingBoxes = async (
   boundingBox: BoundingBox,
   maxResults: number,
-  accumulator: BoundingBox[] = []
+  boundingBoxesDataAccumulator: BoundingBox[] = [],
+  queueMessagesAccumulator: any[] = []
 ): Promise<void> => {
   const result = await fetchOCMResults(constructBoundingBoxParam(boundingBox));
   const resultCount = result.length;
 
   if (resultCount < maxResults) {
-    // Add the bounding box to the accumulator if it's within the limit
-    const boundingBoxDataHash = generateDataHash(result, 'sha256');
-    boundingBox.dataHash = boundingBoxDataHash;
-    boundingBox.boundingBoxQueryIdentifier = constructBoundingBoxParam(boundingBox);
-    accumulator.push(boundingBox);
+    const dataHash = generateDataHash(result, 'sha256');
+    boundingBox.dataHash = dataHash;
+    boundingBoxesDataAccumulator.push(boundingBox);
+    queueMessagesAccumulator.push({ boundingBoxQueryParam: constructBoundingBoxParam(boundingBox) });
     return;
   }
 
-  // Subdivide the bounding box into smaller regions
+  // Subdivide the bounding box
   const subBoxes = subdivideBoundingBox(boundingBox);
-
-  // Recursively generate bounding boxes for each sub-box in parallel
-  await Promise.all(subBoxes.map((box) => generateBoundingBoxes(box, maxResults, accumulator)));
+  await Promise.all(
+    subBoxes.map((box: BoundingBox) =>
+      generateBoundingBoxes(box, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator)
+    )
+  );
 };
 
-export const validateBoundingBox = async (boundingBox: BoundingBox, maxResults: number) => {
+export const validateBoundingBox = async (
+  boundingBox: BoundingBox,
+  maxResults: number,
+  queueMessagesAccumulator: QueueMessage[] = []
+) => {
   const result = await fetchOCMResults(constructBoundingBoxParam(boundingBox));
   const resultCount = result.length;
 
-  // check if results still below => revalidate changed data
   if (resultCount < maxResults) {
-    // check data didn't change
-    const boundingBoxNewDataHash = generateDataHash(result, 'sha256');
-    if (boundingBoxNewDataHash === boundingBox.dataHash) {
-      return;
-    }
+    const newDataHash = generateDataHash(result, 'sha256');
+    if (newDataHash === boundingBox.dataHash) return;
 
-    // hashes don't match (data increased) => re-process the box
-    // TO-DO
-    // send message to queue
-  }
-  // if it exceeded the max, subdivide, save the new coordinates and re-process
-  else {
+    queueMessagesAccumulator.push({ boundingBoxQueryParam: constructBoundingBoxParam(boundingBox) });
+  } else {
     const boundingBoxesDataAccumulator: BoundingBox[] = [];
+    await generateBoundingBoxes(boundingBox, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator);
 
-    console.log('Generating bounding boxes...');
-    await generateBoundingBoxes(boundingBox, commonConfig.maxResultsPerApiCall, boundingBoxesDataAccumulator);
-
-    // insert new bounding boxes with their hashes
     await BoundingBoxModel.insertMany(boundingBoxesDataAccumulator);
-
-    // remove parent bounding box from future processing
     await BoundingBoxModel.deleteOne({ _id: boundingBox._id });
-
-    // TO-DO
-    // send new messages to queue
   }
+};
+
+export const partitionOcmDataByBoundingBoxes = async (queueService: QueueService) => {
+  const maxResults = commonConfig.maxResultsPerApiCall;
+
+  // Accumulators for messages and bounding boxes
+  const queueMessagesAccumulator: QueueMessage[] = [];
+  const boundingBoxesDataAccumulator: BoundingBox[] = [];
+
+  // Check if there are existing bounding boxes
+  const existingBoundingBoxes = await BoundingBoxModel.find();
+
+  if (!existingBoundingBoxes.length) {
+    // If no data partitions exist, generate them
+    console.log('Generating bounding boxes...');
+    const worldBoundingBox: BoundingBox = {
+      topLeftCoordinates: [-90, -180],
+      bottomRightCoordinates: [90, 180]
+    };
+
+    await generateBoundingBoxes(worldBoundingBox, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator);
+
+    await BoundingBoxModel.insertMany(boundingBoxesDataAccumulator);
+    console.log(`Generated ${boundingBoxesDataAccumulator.length} bounding boxes.`);
+  } else {
+    console.log('found bounding boxes', existingBoundingBoxes.length);
+
+    // If data partitions exist, validate and update them
+    await Promise.all(
+      existingBoundingBoxes.map((boundingBox) => validateBoundingBox(boundingBox, maxResults, queueMessagesAccumulator))
+    );
+  }
+
+  // Send accumulated messages to the queue
+  const { channel, connection } = await queueService.connectToQueue();
+  queueMessagesAccumulator.forEach((message) => queueService.sendMessage(channel, JSON.stringify(message)));
+
+  await queueService.closeQueueConnection(connection);
 };

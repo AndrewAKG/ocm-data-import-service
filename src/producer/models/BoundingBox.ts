@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 // Interface to define the structure of the bounding box document
 export interface BoundingBox {
   _id?: string;
-  boundingBoxQueryIdentifier?: string;
   topLeftCoordinates: [number, number];
   bottomRightCoordinates: [number, number];
   dataHash?: string;
@@ -19,7 +18,6 @@ const BoundingBoxSchema = new Schema<BoundingBox>(
       type: String,
       default: uuidv4
     },
-    boundingBoxQueryIdentifier: { type: String, required: true, unique: true },
     topLeftCoordinates: {
       type: [Number],
       required: true,

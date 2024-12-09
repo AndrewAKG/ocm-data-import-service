@@ -4,7 +4,19 @@ services:
   producer:
     env_file:
       - .env
-    command: ['npx', 'nodemon', 'src/producer/index.ts'] # Use nodemon in development
+    command: ['npx', 'nodemon', '--config', 'nodemon-producer.json']
     volumes:
-      - .:/app # Mount local files for hot reloading
-      - /app/node_modules # Prevent overriding node_modules
+      - .:/app
+      - producer_node_modules:/app/node_modules
+
+  consumer:
+    env_file:
+      - .env
+    command: ['npx', 'nodemon', '--config', 'nodemon-consumer.json']
+    volumes:
+      - .:/app
+      - consumer_node_modules:/app/node_modules
+
+volumes:
+  producer_node_modules:
+  consumer_node_modules:

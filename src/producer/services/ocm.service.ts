@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { commonConfig } from '../../common/config';
+import { commonConfig } from '../../common/config/config';
 
 export const fetchOCMResults = async (boundingBox: string): Promise<any[]> => {
   try {

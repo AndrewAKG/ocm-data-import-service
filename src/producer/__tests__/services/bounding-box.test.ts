@@ -1,13 +1,9 @@
 import axios from 'axios';
 
 import { BoundingBox, BoundingBoxModel } from '../../models/BoundingBox';
-import {
-  constructBoundingBoxParam,
-  subdivideBoundingBox,
-  generateBoundingBoxes,
-  validateBoundingBox
-} from '../../services/bounding-box.service';
+import { generateBoundingBoxes, validateBoundingBox } from '../../services/bounding-box.service';
 import { generateDataHash } from '../../utils/hashing-utils';
+import { constructBoundingBoxParam, subdivideBoundingBox } from '../../utils/boundingbox-utils';
 
 jest.mock('axios');
 jest.mock('../../models/BoundingBox');
