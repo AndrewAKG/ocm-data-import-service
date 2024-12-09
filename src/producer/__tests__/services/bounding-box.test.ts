@@ -2,7 +2,6 @@ import axios from 'axios';
 import { BoundingBox } from '../../models/BoundingBox';
 import {
   constructBoundingBoxParam,
-  fetchResultsCount,
   subdivideBoundingBox,
   generateBoundingBoxes
 } from '../../services/bounding-box.service';
@@ -19,40 +18,6 @@ describe('Bounding Box Service', () => {
 
       const result = constructBoundingBoxParam(boundingBox);
       expect(result).toBe('(10,20),(30,40)');
-    });
-  });
-
-  describe('fetchResultsCount', () => {
-    it('should return the correct count of results', async () => {
-      const boundingBox: BoundingBox = {
-        topLeftCoordinates: [10, 20],
-        bottomRightCoordinates: [30, 40]
-      };
-
-      const mockResponse = { data: Array(50) }; // Simulating 50 results
-      (axios.get as jest.Mock).mockResolvedValueOnce(mockResponse);
-
-      const result = await fetchResultsCount(boundingBox);
-      expect(result).toBe(50);
-      expect(axios.get).toHaveBeenCalledWith(expect.stringContaining('/poi'), {
-        params: {
-          boundingbox: '(10,20),(30,40)',
-          opendata: true,
-          compact: true
-        }
-      });
-    });
-
-    it('should return 0 if an error occurs', async () => {
-      const boundingBox: BoundingBox = {
-        topLeftCoordinates: [10, 20],
-        bottomRightCoordinates: [30, 40]
-      };
-
-      (axios.get as jest.Mock).mockRejectedValueOnce(new Error('Network Error'));
-
-      const result = await fetchResultsCount(boundingBox);
-      expect(result).toBe(0);
     });
   });
 

@@ -1,7 +1,9 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Types } from 'mongoose';
 
 // Interface to define the structure of the bounding box document
 export interface BoundingBox {
+  _id?: Types.ObjectId;
+  boundingBoxQueryIdentifier?: string;
   topLeftCoordinates: [number, number];
   bottomRightCoordinates: [number, number];
   dataHash?: string;
@@ -12,6 +14,7 @@ export interface BoundingBox {
 // Define the Mongoose schema
 const BoundingBoxSchema = new Schema<BoundingBox>(
   {
+    boundingBoxQueryIdentifier: { type: String, required: true, unique: true },
     topLeftCoordinates: {
       type: [Number],
       required: true,

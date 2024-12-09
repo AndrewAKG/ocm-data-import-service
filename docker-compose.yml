@@ -10,8 +10,6 @@ services:
     command: ['node', 'dist/producer/index.js'] # Producer-specific entry point
     depends_on:
       - mongo
-    volumes:
-      - .:/app
     ports:
       - '3001:3000'
 

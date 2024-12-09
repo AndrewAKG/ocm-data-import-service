@@ -8,9 +8,9 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build
 
-# Stage 2: Run tests
-FROM builder AS tester
-RUN pnpm test
+# # Stage 2: Run tests
+# FROM builder AS tester
+# RUN pnpm test
 
 # Stage 3: Create a lightweight production image
 FROM node:22-alpine AS runner

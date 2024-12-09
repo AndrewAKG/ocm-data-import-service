@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  producer:
+    env_file:
+      - .env
+    command: ['npx', 'nodemon', 'src/producer/index.ts'] # Use nodemon in development
+    volumes:
+      - .:/app # Mount local files for hot reloading
+      - /app/node_modules # Prevent overriding node_modules

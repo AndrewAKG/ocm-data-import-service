@@ -1,4 +1,6 @@
-import { BoundingBox } from '../models/BoundingBox';
+import { commonConfig } from '../../common/config';
+import { BoundingBox, BoundingBoxModel } from '../models/BoundingBox';
+import { generateDataHash } from '../utils/hashing-utils';
 import { fetchOCMResults } from './ocm.service';
 
 export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
@@ -36,8 +38,11 @@ export const generateBoundingBoxes = async (
   const result = await fetchOCMResults(constructBoundingBoxParam(boundingBox));
   const resultCount = result.length;
 
-  if (resultCount <= maxResults) {
+  if (resultCount < maxResults) {
     // Add the bounding box to the accumulator if it's within the limit
+    const boundingBoxDataHash = generateDataHash(result, 'sha256');
+    boundingBox.dataHash = boundingBoxDataHash;
+    boundingBox.boundingBoxQueryIdentifier = constructBoundingBoxParam(boundingBox);
     accumulator.push(boundingBox);
     return;
   }
@@ -47,4 +52,38 @@ export const generateBoundingBoxes = async (
 
   // Recursively generate bounding boxes for each sub-box in parallel
   await Promise.all(subBoxes.map((box) => generateBoundingBoxes(box, maxResults, accumulator)));
+};
+
+export const validateBoundingBox = async (boundingBox: BoundingBox, maxResults: number) => {
+  const result = await fetchOCMResults(constructBoundingBoxParam(boundingBox));
+  const resultCount = result.length;
+
+  // check if results still below => revalidate changed data
+  if (resultCount < maxResults) {
+    // check data didn't change
+    const boundingBoxNewDataHash = generateDataHash(result, 'sha256');
+    if (boundingBoxNewDataHash === boundingBox.dataHash) {
+      return;
+    }
+
+    // hashes don't match (data increased) => re-process the box
+    // TO-DO
+    // send message to queue
+  }
+  // if it exceeded the max, subdivide, save the new coordinates and re-process
+  else {
+    const boundingBoxesDataAccumulator: BoundingBox[] = [];
+
+    console.log('Generating bounding boxes...');
+    await generateBoundingBoxes(boundingBox, commonConfig.maxResultsPerApiCall, boundingBoxesDataAccumulator);
+
+    // insert new bounding boxes with their hashes
+    await BoundingBoxModel.insertMany(boundingBoxesDataAccumulator);
+
+    // remove parent bounding box from future processing
+    await BoundingBoxModel.deleteOne({ _id: boundingBox._id });
+
+    // TO-DO
+    // send new messages to queue
+  }
 };
