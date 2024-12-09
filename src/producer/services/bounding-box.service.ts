@@ -1,9 +1,9 @@
 import { BoundingBox, BoundingBoxModel } from '../models/BoundingBox';
-import { fetchOCMResults } from './ocm.service';
+import { fetchOcmPoiData } from '@common/services/ocm.service';
 import { generateDataHash } from '../utils/hashing-utils';
-import { QueueMessage, QueueService } from '../../common/types/queue';
+import { QueueMessage, QueueService } from '@common/types/queue.types';
 import { constructBoundingBoxParam, subdivideBoundingBox } from '../utils/boundingbox-utils';
-import { commonConfig } from '../../common/config/config';
+import { commonConfig } from '@common/config/config';
 
 export const generateBoundingBoxes = async (
   boundingBox: BoundingBox,
@@ -11,7 +11,7 @@ export const generateBoundingBoxes = async (
   boundingBoxesDataAccumulator: BoundingBox[] = [],
   queueMessagesAccumulator: any[] = []
 ): Promise<void> => {
-  const result = await fetchOCMResults(constructBoundingBoxParam(boundingBox));
+  const result = await fetchOcmPoiData(constructBoundingBoxParam(boundingBox));
   const resultCount = result.length;
 
   if (resultCount < maxResults) {
@@ -36,7 +36,7 @@ export const validateBoundingBox = async (
   maxResults: number,
   queueMessagesAccumulator: QueueMessage[] = []
 ) => {
-  const result = await fetchOCMResults(constructBoundingBoxParam(boundingBox));
+  const result = await fetchOcmPoiData(constructBoundingBoxParam(boundingBox));
   const resultCount = result.length;
 
   if (resultCount < maxResults) {

@@ -33,6 +33,8 @@ services:
     ports:
       - '27017:27017'
     restart: always
+    volumes:
+      - mongo_data:/data/db
 
   rabbitmq:
     image: rabbitmq:4-management
@@ -42,3 +44,6 @@ services:
       - '15672:15672' # Management UI port
     env_file:
       - .env
+
+volumes:
+  mongo_data:
