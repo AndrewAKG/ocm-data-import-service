@@ -1,8 +1,9 @@
-import mongoose, { Schema, Types } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 // Interface to define the structure of the bounding box document
 export interface BoundingBox {
-  _id?: Types.ObjectId;
+  _id?: string;
   boundingBoxQueryIdentifier?: string;
   topLeftCoordinates: [number, number];
   bottomRightCoordinates: [number, number];
@@ -14,6 +15,10 @@ export interface BoundingBox {
 // Define the Mongoose schema
 const BoundingBoxSchema = new Schema<BoundingBox>(
   {
+    _id: {
+      type: String,
+      default: uuidv4
+    },
     boundingBoxQueryIdentifier: { type: String, required: true, unique: true },
     topLeftCoordinates: {
       type: [Number],
