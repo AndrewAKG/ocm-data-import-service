@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { connectToDB } from '@common/db/connect';
 import { createQueueService } from '@common/services/queue.service';
 import { commonConfig } from '@common/config/config';
+import { QueueMessage } from '@common/types/queue';
 import { Message } from 'amqplib';
 
 dotenv.config();
@@ -11,16 +12,19 @@ const queueService = createQueueService(commonConfig.queueUri, commonConfig.queu
   console.log('Consumer Service Started');
   await connectToDB();
 
-  const { connection, channel } = await queueService.connectToQueue();
+  const message: QueueMessage = {
+    boundingBoxQueryParam: ''
+  };
+  // const { connection, channel } = await queueService.connectToQueue();
 
-  // Consume messages
-  await queueService.consumeMessages(channel, (msg: Message) => {
-    console.log('Received message:', msg);
-  });
+  // // Consume messages
+  // await queueService.consumeMessages(channel, (msg: Message) => {
+  //   console.log('Received message:', msg);
+  // });
 
-  // Graceful shutdown
-  process.on('SIGINT', async () => {
-    await queueService.closeQueueConnection(connection);
-    process.exit(0);
-  });
+  // // Graceful shutdown
+  // process.on('SIGINT', async () => {
+  //   await queueService.closeQueueConnection(connection);
+  //   process.exit(0);
+  // });
 })();

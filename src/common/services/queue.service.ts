@@ -1,5 +1,5 @@
 import amqp, { Connection, Channel, Message } from 'amqplib';
-import { QueueService } from '../types/queue.types';
+import { QueueService } from '../types/queue';
 
 export const createQueueService = (queueUri: string, queueName: string): QueueService => {
   return {

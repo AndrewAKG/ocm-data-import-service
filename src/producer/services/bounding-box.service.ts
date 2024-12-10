@@ -1,7 +1,7 @@
 import { BoundingBox, BoundingBoxModel } from '../models/BoundingBox';
 import { fetchOcmPoiData } from '@common/services/ocm.service';
 import { generateDataHash } from '../utils/hashing-utils';
-import { QueueMessage, QueueService } from '@common/types/queue.types';
+import { QueueMessage, QueueService } from '@common/types/queue';
 import { constructBoundingBoxParam, subdivideBoundingBox } from '../utils/boundingbox-utils';
 import { commonConfig } from '@common/config/config';
 

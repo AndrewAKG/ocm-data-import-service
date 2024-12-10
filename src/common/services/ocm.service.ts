@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { commonConfig } from '../../common/config/config';
+import { commonConfig } from '@common/config/config';
+import { POI } from '@common/types/poi';
 
-export const fetchOcmPoiData = async (boundingBox: string): Promise<any[]> => {
+export const fetchOcmPoiData = async (boundingBox: string): Promise<POI[]> => {
   try {
     const response = await axios.get(`${commonConfig.ocmApiBaseUrl}/poi`, {
       params: {
