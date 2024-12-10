@@ -1,7 +1,7 @@
 interface DataProviderStatusType {
   IsProviderEnabled: boolean;
   ID: number[];
-  description: string[];
+  Title: string[];
 }
 
 interface DataProvider {

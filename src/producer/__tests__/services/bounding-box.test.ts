@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { BoundingBox, BoundingBoxModel } from '../../models/BoundingBox';
+import { BoundingBox, BoundingBoxModel } from '../../models/bounding-box';
 import { generateBoundingBoxes, validateBoundingBox } from '../../services/bounding-box.service';
 import { generateDataHash } from '../../utils/hashing-utils';
 import { constructBoundingBoxParam, subdivideBoundingBox } from '../../utils/boundingbox-utils';

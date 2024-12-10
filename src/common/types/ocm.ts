@@ -1,10 +1,9 @@
-import { ChargerType } from './charger-type';
 import { CheckinStatusType, CommentType } from './comment';
-import { ConnectionType, SupplyType } from './connection';
+import { ConnectionType, SupplyType, ChargerType } from './connection';
 import { Country } from './country';
 import { DataProvider } from './data-provider';
 import { Operator } from './operator';
-import { SubmissionStatus, UsageType } from './poi';
+import { POI, SubmissionStatus, UsageType } from './poi';
 import { StatusType } from './status-types';
 
 export interface ReferenceDataResponse {
@@ -14,7 +13,7 @@ export interface ReferenceDataResponse {
   Countries: Country[];
   CurrentTypes: SupplyType[];
   DataProviders: DataProvider[];
-  DataTypes: any; // Replace with proper type if structure is known
+  DataTypes: any;
   MetadataGroups: string | null;
   Operators: Operator[];
   StatusTypes: StatusType[];
@@ -22,3 +21,5 @@ export interface ReferenceDataResponse {
   UsageTypes: UsageType[];
   UserCommentTypes: CommentType[];
 }
+
+export type POIDataResponse = POI[];

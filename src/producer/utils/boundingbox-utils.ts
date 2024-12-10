@@ -1,4 +1,4 @@
-import { BoundingBox } from '../models/BoundingBox';
+import { BoundingBox } from '../models/bounding-box';
 
 export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
   const { topLeftCoordinates, bottomRightCoordinates } = boundingBox;

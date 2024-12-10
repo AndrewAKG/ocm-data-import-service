@@ -5,7 +5,6 @@ type SupplyTypeDocument = SupplyType & Document;
 
 const SupplyTypeSchema: Schema = new Schema<SupplyTypeDocument>({
   _id: Number,
-  ID: { type: Number, required: true, unique: true },
   Title: { type: String, required: true }
 });
 

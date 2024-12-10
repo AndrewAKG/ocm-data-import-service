@@ -1,4 +1,4 @@
-import { BoundingBox, BoundingBoxModel } from '../models/BoundingBox';
+import { BoundingBox, BoundingBoxModel } from '../models/bounding-box';
 import { fetchOcmPoiData } from '@common/services/ocm.service';
 import { generateDataHash } from '../utils/hashing-utils';
 import { QueueMessage, QueueService } from '@common/types/queue';

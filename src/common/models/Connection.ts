@@ -3,9 +3,8 @@ import { Connection } from '@common/types/connection';
 
 type ConnectionDocument = Connection & Document;
 
-const ConnectionSchema: Schema = new Schema<ConnectionDocument>({
+export const ConnectionSchema: Schema = new Schema<ConnectionDocument>({
   _id: Number,
-  ID: { type: Number, required: true, unique: true },
   ConnectionTypeID: { type: Number, required: true },
   Reference: { type: String, default: null },
   StatusTypeID: { type: Number, required: true },

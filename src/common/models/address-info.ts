@@ -1,11 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 import { AddressInfo } from '../types/address-info';
 
 type AddressInfoDocument = AddressInfo & Document;
 
-const AddressInfoSchema: Schema = new Schema<AddressInfoDocument>({
+export const AddressInfoSchema: Schema = new Schema<AddressInfoDocument>({
   _id: Number,
-  ID: { type: Number, required: true },
   AddressLine1: { type: String, required: true },
   AddressLine2: { type: String, default: null },
   Town: { type: String, required: true },
@@ -23,5 +22,3 @@ const AddressInfoSchema: Schema = new Schema<AddressInfoDocument>({
   DistanceUnit: { type: Number, required: true },
   Title: { type: String, required: true }
 });
-
-export const AddressInfoModel = mongoose.model<AddressInfoDocument>('AddressInfo', AddressInfoSchema);

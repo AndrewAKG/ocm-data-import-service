@@ -1,4 +1,5 @@
 import { AddressInfo } from './address-info';
+import { Comment } from './comment';
 import { Connection } from './connection';
 import { DataProvider } from './data-provider';
 import { MediaItem } from './media-item';
@@ -22,34 +23,33 @@ interface UsageType {
 interface POI {
   ID: number;
   UUID: string;
-  UserComments: Comment[];
   MediaItems: MediaItem[];
   IsRecentlyVerified: boolean;
   DateLastVerified: string;
-  ParentChargePointID?: number | null;
-  DataProviderID: number;
-  DataProvidersReference?: string | null;
-  OperatorID: number;
-  OperatorsReference?: string | null;
-  UsageTypeID: number;
-  UsageCost?: string | null;
+  ParentChargePointID: number;
+  UsageCost: string;
   AddressInfo: AddressInfo;
   Connections: Connection[];
   NumberOfPoints: number;
   GeneralComments: string;
-  DatePlanned?: string | null;
-  DateLastConfirmed?: string | null;
-  StatusTypeID: number;
+  DatePlanned: string;
+  DateLastConfirmed: string;
   DateLastStatusUpdate: string;
-  MetadataValues: unknown[]; // Assuming unknown structure for now
   DataQualityLevel: number;
   DateCreated: string;
+  DataProviderID: number;
+  DataProvidersReference: string;
+  OperatorID: number;
+  OperatorsReference: string;
+  UsageTypeID: number;
+  StatusTypeID: number;
   SubmissionStatusTypeID: number;
-  DataProvider: DataProvider;
-  OperatorInfo: Operator;
-  UsageType: UsageType;
-  StatusType: StatusType;
-  SubmissionStatus: SubmissionStatus;
+  UserComments?: Comment[] | null;
+  DataProvider?: DataProvider | null;
+  OperatorInfo?: Operator | null;
+  UsageType?: UsageType | null;
+  StatusType?: StatusType | null;
+  SubmissionStatus?: SubmissionStatus | null;
 }
 
 export { SubmissionStatus, UsageType, POI };
