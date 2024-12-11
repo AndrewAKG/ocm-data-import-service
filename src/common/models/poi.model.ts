@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { AddressInfoSchema } from './address-info';
-import { ConnectionSchema } from './connection';
-import { MediaItemSchema } from './media-item';
-import { CommentSchema } from './comment';
+import { AddressInfoSchema } from './address-info.model';
+import { ConnectionSchema } from './connection.model';
+import { MediaItemSchema } from './media-item.model';
+import { CommentSchema } from './comment.model';
 import { POI } from '@common/types/poi';
-import { DataProviderDocument } from './data-provider';
-import { UsageTypeSchema } from './usage-type';
-import { StatusTypeSchema } from './status-type';
-import { SubmissionStatusSchema } from './submission-status';
-import { OperatorDocument } from './operator';
+import { DataProviderDocument } from './data-provider.model';
+import { UsageTypeSchema } from './usage-type.model';
+import { StatusTypeSchema } from './status-type.model';
+import { SubmissionStatusSchema } from './submission-status.model';
+import { OperatorDocument } from './operator.model';
 
 type POIDocument = POI & Document;
 

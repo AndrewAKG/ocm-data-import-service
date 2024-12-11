@@ -1,5 +1,5 @@
 import { DataProvider } from '@common/types/data-provider';
-import { DataProviderStatusTypeSchema } from './data-provider-status-type'; // Import the schema
+import { DataProviderStatusTypeSchema } from './data-provider-status-type.model'; // Import the schema
 import mongoose, { Schema, Document } from 'mongoose';
 
 export type DataProviderDocument = DataProvider & Document;

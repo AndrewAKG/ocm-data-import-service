@@ -1,5 +1,5 @@
 import { MediaItem } from '@common/types/media-item';
-import { UserInfoSchema } from './user-info'; // Import UserInfoSchema
+import { UserInfoSchema } from './user-info.model'; // Import UserInfoSchema
 import mongoose, { Schema, Document } from 'mongoose';
 
 type MediaItemDocument = MediaItem & Document;

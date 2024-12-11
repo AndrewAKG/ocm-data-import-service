@@ -1,5 +1,5 @@
 import { Operator } from '@common/types/operator';
-import { AddressInfoSchema } from './address-info'; // Import AddressInfoSchema
+import { AddressInfoSchema } from './address-info.model'; // Import AddressInfoSchema
 import mongoose, { Schema, Document } from 'mongoose';
 
 export type OperatorDocument = Operator & Document;

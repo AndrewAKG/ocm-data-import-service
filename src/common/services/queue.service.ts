@@ -26,7 +26,7 @@ export const createQueueService = (queueUri: string, queueName: string): QueueSe
     },
 
     // Consume messages from the queue
-    consumeMessages: async (channel: Channel, onMessage: (msg: Message | null) => void) => {
+    consumeMessages: async (channel: Channel, onMessage: (msg: Message) => void) => {
       console.log(`Waiting for messages in queue: ${queueName}`);
       await channel.consume(
         queueName,

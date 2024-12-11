@@ -1,4 +1,4 @@
-import { BoundingBox, BoundingBoxModel } from '../models/bounding-box';
+import { BoundingBox, BoundingBoxModel } from '../models/bounding-box.model';
 import { fetchOcmPoiData } from '@common/services/ocm.service';
 import { generateDataHash } from '../utils/hashing-utils';
 import { QueueMessage, QueueService } from '@common/types/queue';
@@ -19,16 +19,17 @@ export const generateBoundingBoxes = async (
     boundingBox.dataHash = dataHash;
     boundingBoxesDataAccumulator.push(boundingBox);
     queueMessagesAccumulator.push({ boundingBoxQueryParam: constructBoundingBoxParam(boundingBox) });
+    console.log(constructBoundingBoxParam(boundingBox), resultCount);
     return;
   }
 
   // Subdivide the bounding box
   const subBoxes = subdivideBoundingBox(boundingBox);
-  await Promise.all(
-    subBoxes.map((box: BoundingBox) =>
-      generateBoundingBoxes(box, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator)
-    )
-  );
+
+  // run sequential to avoid memory overload
+  for (const subBox of subBoxes) {
+    await generateBoundingBoxes(subBox, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator);
+  }
 };
 
 export const validateBoundingBox = async (
@@ -73,20 +74,21 @@ export const partitionOcmDataByBoundingBoxes = async (queueService: QueueService
 
     await generateBoundingBoxes(worldBoundingBox, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator);
 
-    await BoundingBoxModel.insertMany(boundingBoxesDataAccumulator);
+    // await BoundingBoxModel.insertMany(boundingBoxesDataAccumulator);
     console.log(`Generated ${boundingBoxesDataAccumulator.length} bounding boxes.`);
   } else {
     console.log('found bounding boxes', existingBoundingBoxes.length);
 
     // If data partitions exist, validate and update them
-    await Promise.all(
-      existingBoundingBoxes.map((boundingBox) => validateBoundingBox(boundingBox, maxResults, queueMessagesAccumulator))
-    );
+    // run sequential to avoid memory overload
+    for (const boundingBox of existingBoundingBoxes) {
+      await validateBoundingBox(boundingBox, maxResults, queueMessagesAccumulator);
+    }
   }
 
   // Send accumulated messages to the queue
-  const { channel, connection } = await queueService.connectToQueue();
-  queueMessagesAccumulator.forEach((message) => queueService.sendMessage(channel, JSON.stringify(message)));
+  // const { channel, connection } = await queueService.connectToQueue();
+  // queueMessagesAccumulator.forEach((message) => queueService.sendMessage(channel, JSON.stringify(message)));
 
-  await queueService.closeQueueConnection(connection);
+  // await queueService.closeQueueConnection(connection);
 };

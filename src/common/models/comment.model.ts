@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { UserInfoSchema } from './user-info';
-import { CommentTypeSchema } from './comment-type';
-import { CheckinStatusTypeSchema } from './checkin-status-type';
+import { UserInfoSchema } from './user-info.model';
+import { CommentTypeSchema } from './comment-type.model';
+import { CheckinStatusTypeSchema } from './checkin-status-type.model';
 import { Comment } from '@common/types/comment';
 
 type CommentDocument = Comment & Document;
