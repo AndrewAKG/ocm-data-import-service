@@ -12,7 +12,7 @@ export * from './media-item.model';
 export * from './operator.model';
 export * from './poi.model';
 export * from './status-type.model';
-export * from './submission-status.model';
+export * from './submission-status-types.model';
 export * from './supply-type.model';
 export * from './usage-type.model';
 export * from './user-info.model';

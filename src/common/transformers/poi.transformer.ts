@@ -1,5 +1,5 @@
 import { POIDocument } from '@common/models/poi.model';
-import { SubmissionStatusDocument } from '@common/models/submission-status.model';
+import { SubmissionStatusDocument } from '@common/models/submission-status-types.model';
 import { UsageTypeDocument } from '@common/models/usage-type.model';
 import { POI, SubmissionStatus, UsageType } from '@common/types/poi';
 

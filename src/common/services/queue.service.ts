@@ -1,7 +1,7 @@
 import amqp, { Connection, Channel, Message } from 'amqplib';
 import { QueueService } from '../types/queue';
 
-export const createQueueService = (queueUri: string, queueName: string): QueueService => {
+export const createRabbitMQQueueService = (queueUri: string, queueName: string): QueueService => {
   return {
     // Connect to the queue
     connectToQueue: async () => {

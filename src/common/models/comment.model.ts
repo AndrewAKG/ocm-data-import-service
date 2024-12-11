@@ -11,7 +11,7 @@ export interface CommentDocument extends Comment {
 
 export const CommentSchema: Schema<CommentDocument> = new Schema<CommentDocument>({
   _id: String,
-  PoiID: { type: String, required: true },
+  PoiID: { type: String, required: true, index: true },
   CommentTypeID: { type: Number, required: true },
   CommentType: { type: CommentTypeSchema, required: true },
   UserName: { type: String, required: true },

@@ -1,18 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import { DataPartitionDocument } from '../types/data-partitioning';
 
-// Interface to define the structure of the bounding box document
-export interface BoundingBox {
-  _id?: string;
-  topLeftCoordinates: [number, number];
-  bottomRightCoordinates: [number, number];
-  dataHash?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-// Define the Mongoose schema
-const BoundingBoxSchema = new Schema<BoundingBox>(
+const DataPartitionSchema = new Schema<DataPartitionDocument>(
   {
     _id: {
       type: String,
@@ -40,8 +30,9 @@ const BoundingBoxSchema = new Schema<BoundingBox>(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    collection: 'data_partitions'
   }
 );
 
-export const BoundingBoxModel = mongoose.model<BoundingBox>('BoundingBox', BoundingBoxSchema);
+export const DataPartitionModel = mongoose.model<DataPartitionDocument>('DataPartition', DataPartitionSchema);
