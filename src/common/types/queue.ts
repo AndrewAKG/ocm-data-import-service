@@ -1,12 +1,15 @@
-import { Connection, Channel, Message } from 'amqplib';
+import { Connection, Message, ConfirmChannel } from 'amqplib';
 
 export interface QueueService {
-  connectToQueue: () => Promise<{ connection: Connection; channel: Channel }>;
+  connectToQueue: () => Promise<{ connection: Connection; channel: ConfirmChannel }>;
   closeQueueConnection: (connection: Connection) => Promise<void>;
-  sendMessage: (channel: Channel, message: string) => void;
-  consumeMessages: (channel: Channel, onMessage: (msg: Message) => void) => Promise<void>;
+  sendMessage: (channel: ConfirmChannel, message: string) => void;
+  consumeMessages: (channel: ConfirmChannel, onMessage: (msg: Message) => void) => Promise<void>;
 }
 
 export interface QueueMessage {
-  partitionParams: object;
+  partitionParams: {
+    boundingbox: string;
+    // other partition params as needed
+  };
 }

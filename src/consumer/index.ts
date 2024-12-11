@@ -4,6 +4,7 @@ import { createRabbitMQQueueService } from '@common/services/queue.service';
 import { commonConfig } from '@common/config/config';
 import { QueueMessage } from '@common/types/queue';
 import { processMessage } from './services/message-processor.service';
+import { Message } from 'amqplib';
 
 dotenv.config();
 const queueService = createRabbitMQQueueService(commonConfig.queueUri, commonConfig.queueName);
@@ -12,21 +13,18 @@ const queueService = createRabbitMQQueueService(commonConfig.queueUri, commonCon
   console.log('Consumer Service Started');
   await connectToDB();
 
-  const message: QueueMessage = {
-    partitionParams: { boundingbox: '(-90,0),(0,90)' }
-  };
+  const { connection, channel } = await queueService.connectToQueue();
 
-  await processMessage(message);
-  // const { connection, channel } = await queueService.connectToQueue();
-
-  // // Consume messages
-  // await queueService.consumeMessages(channel, (msg: Message) => {
-  //   console.log('Received message:', msg);
-  // });
+  // Consume messages
+  await queueService.consumeMessages(channel, async (msg: Message) => {
+    const parsedMessage: QueueMessage = JSON.parse(msg.content.toString());
+    console.log('Received message:', JSON.stringify(parsedMessage, null, 2));
+    await processMessage(parsedMessage);
+  });
 
   // // Graceful shutdown
-  // process.on('SIGINT', async () => {
-  //   await queueService.closeQueueConnection(connection);
-  //   process.exit(0);
-  // });
+  process.on('SIGINT', async () => {
+    await queueService.closeQueueConnection(connection);
+    process.exit(0);
+  });
 })();

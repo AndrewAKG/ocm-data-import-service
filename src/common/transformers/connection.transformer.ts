@@ -9,5 +9,7 @@ export const transformConnectionType = (connectionType: ConnectionType): Connect
 export const transformConnection = (PoiID: string, connection: Connection): ConnectionDocument => ({
   ...connection,
   _id: connection.ID,
-  PoiID
+  PoiID,
+  ChargerType: connection.Level,
+  ChargerTypeID: connection.LevelID
 });

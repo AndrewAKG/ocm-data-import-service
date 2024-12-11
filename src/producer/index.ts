@@ -22,13 +22,18 @@ const partitionService = createBoundingBoxPartitioningService();
   console.log('Producer Service Started');
   await connectToDB();
 
-  // upsert reference data one time
-  // should be improved to compare hashes before insertion
+  /** 
+    upsert reference data one time
+    should be improved to compare hashes before insertion
+  */
   const referenceData = await fetchOcmReferenceData();
   const transformedReferenceData = transformReferenceData(referenceData);
   await ingestReferenceData(transformedReferenceData);
 
-  // partition data and get relevant operations
+  /** 
+    check if partitions exists in db => check for updates
+    if not exists => partition data and save them in db
+  */
   const existingDataPartitions = await partitionService.getDataPartitions();
 
   const {
@@ -45,10 +50,14 @@ const partitionService = createBoundingBoxPartitioningService();
   await bulkWrite(DataPartitionModel, dataPartitionsUpdates.map(updateOneBulkOperation));
   await bulkWrite(DataPartitionModel, dataPartitionsDeletions.map(deleteOneBulkOperation));
 
-  // Send messages to the queue
-  const { channel, connection } = await queueService.connectToQueue();
-  queueMessages.forEach((message) => queueService.sendMessage(channel, JSON.stringify(message)));
+  // Send messages to the queue for reliable horizontally scalable processing
+  if (queueMessages.length) {
+    const { channel, connection } = await queueService.connectToQueue();
 
-  await queueService.closeQueueConnection(connection);
+    queueMessages.forEach((message) => queueService.sendMessage(channel, JSON.stringify(message)));
+
+    await channel.waitForConfirms();
+    await queueService.closeQueueConnection(connection);
+  }
   process.exit(0);
 })();

@@ -13,7 +13,7 @@ const generateBoundingBoxes = async (
   dataPartitionsAccumulator: DataPartition[],
   queueMessagesAccumulator: QueueMessage[]
 ) => {
-  const boundingBoxParitionParams = { boundingBox: constructBoundingBoxParam(boundingBox) };
+  const boundingBoxParitionParams = { boundingbox: constructBoundingBoxParam(boundingBox) };
   const result = await fetchOcmPoiData(boundingBoxParitionParams);
   const resultCount = result.length;
 
@@ -47,6 +47,7 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
   return {
     getDataPartitions: async () => {
       const existingDataPartitions = await DataPartitionModel.find();
+      console.log(`found ${existingDataPartitions.length} partitions`);
       return existingDataPartitions;
     },
 
@@ -58,7 +59,7 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
 
       // Process each partition sequentially to avoid overloading the memory
       for (const partition of existingDataPartitions) {
-        const boundingBoxPartitionParams = { boundingBox: constructBoundingBoxParam(partition) };
+        const boundingBoxPartitionParams = { boundingbox: constructBoundingBoxParam(partition) };
         const result = await fetchOcmPoiData(boundingBoxPartitionParams);
         const resultCount = result.length;
 
@@ -66,11 +67,14 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
           const newDataHash = generateDataHash(result, 'sha256');
 
           if (partition.dataHash !== newDataHash) {
+            console.log('data hash mismatch => update and re-process partition');
             partition.dataHash = newDataHash;
             dataPartitionsUpdates.push(partition);
             queueMessages.push({ partitionParams: boundingBoxPartitionParams });
           }
+          console.log('data hash matches => skip partition');
         } else {
+          console.log('data increased => split partition into smaller ones');
           await generateBoundingBoxes(partition, dataPartitionsInsertions, queueMessages);
           dataPartitionsDeletions.push(partition);
         }

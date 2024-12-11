@@ -28,8 +28,11 @@ export const bulkWrite = async <T>(
   operations: AnyBulkWriteOperation[],
   options?: MongooseBulkWriteOptions
 ): Promise<void> => {
-  if (!operations || operations.length === 0) return;
+  if (!operations || operations.length === 0) {
+    console.log('no operations found => returning');
+    return;
+  }
 
   await model.bulkWrite(operations, options);
-  console.log(`operations done for ${model.modelName} model`);
+  console.log(`${operations.length} operations done for ${model.modelName} model`);
 };
