@@ -1,10 +1,12 @@
+import { ChargerType } from './charger-type';
 import { CheckinStatusType, CommentType } from './comment';
-import { ConnectionType, SupplyType, ChargerType } from './connection';
+import { ConnectionType } from './connection';
 import { Country } from './country';
 import { DataProvider } from './data-provider';
 import { Operator } from './operator';
 import { POI, SubmissionStatus, UsageType } from './poi';
 import { StatusType } from './status-types';
+import { SupplyType } from './supply-type';
 
 export interface ReferenceDataResponse {
   ChargerTypes: ChargerType[];

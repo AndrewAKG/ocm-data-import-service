@@ -1,7 +1,7 @@
-import { SupplyType } from '@common/types/connection';
-import mongoose, { Schema, Document } from 'mongoose';
+import { SupplyType } from '@common/types/supply-type';
+import mongoose, { Schema } from 'mongoose';
 
-type SupplyTypeDocument = SupplyType & Document;
+export type SupplyTypeDocument = SupplyType & { _id: number };
 
 const SupplyTypeSchema: Schema = new Schema<SupplyTypeDocument>({
   _id: Number,

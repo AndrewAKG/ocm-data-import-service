@@ -4,10 +4,10 @@ import { CommentTypeSchema } from './comment-type.model';
 import { CheckinStatusTypeSchema } from './checkin-status-type.model';
 import { Comment } from '@common/types/comment';
 
-type CommentDocument = Comment & Document;
+export type CommentDocument = Comment & { _id: number };
 
-const CommentSchema: Schema<CommentDocument> = new Schema<CommentDocument>({
-  ID: { type: String, required: true },
+export const CommentSchema: Schema<CommentDocument> = new Schema<CommentDocument>({
+  _id: Number,
   ChargePointID: { type: Number, required: true },
   CommentTypeID: { type: Number, required: true },
   CommentType: { type: CommentTypeSchema, required: true },
@@ -20,5 +20,4 @@ const CommentSchema: Schema<CommentDocument> = new Schema<CommentDocument>({
   CheckinStatusType: { type: CheckinStatusTypeSchema, required: true }
 });
 
-const CommentModel = mongoose.model<CommentDocument>('Comment', CommentSchema);
-export { CommentSchema, CommentModel };
+export const CommentModel = mongoose.model<CommentDocument>('Comment', CommentSchema);

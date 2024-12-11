@@ -1,7 +1,7 @@
 import { Country } from '@common/types/country';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-type CountryDocument = Country & Document;
+export type CountryDocument = Country & { _id: number };
 
 const CountrySchema: Schema = new Schema<CountryDocument>({
   _id: Number,

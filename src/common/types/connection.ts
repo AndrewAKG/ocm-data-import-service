@@ -1,21 +1,11 @@
+import { ChargerType } from './charger-type';
 import { StatusType } from './status-types';
+import { SupplyType } from './supply-type';
 
 interface ConnectionType {
   FormalName: string;
   IsDiscontinued: boolean;
   IsObsolete: boolean;
-  ID: number;
-  Title: string;
-}
-
-interface ChargerType {
-  ID: number;
-  Title: string;
-  Comments: string;
-  IsFastChargeCapable: boolean;
-}
-
-interface SupplyType {
   ID: number;
   Title: string;
 }
@@ -38,4 +28,4 @@ interface Connection {
   Comments: string;
 }
 
-export { Connection, ConnectionType, SupplyType, ChargerType };
+export { Connection, ConnectionType };

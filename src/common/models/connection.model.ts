@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { Connection } from '@common/types/connection';
 
-type ConnectionDocument = Connection & Document;
+export type ConnectionDocument = Connection & { _id: number };
 
 export const ConnectionSchema: Schema = new Schema<ConnectionDocument>({
   _id: Number,

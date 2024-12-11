@@ -1,7 +1,7 @@
 import { StatusType } from '@common/types/status-types';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-type StatusTypeDocument = StatusType & Document;
+export type StatusTypeDocument = StatusType & { _id: number };
 
 export const StatusTypeSchema: Schema = new Schema<StatusTypeDocument>({
   _id: { type: Number },

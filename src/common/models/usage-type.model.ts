@@ -1,7 +1,7 @@
 import { UsageType } from '@common/types/poi';
 import mongoose, { Schema, Document } from 'mongoose';
 
-type UsageTypeDocument = UsageType & Document;
+export type UsageTypeDocument = UsageType & { _id: number };
 
 export const UsageTypeSchema: Schema<UsageTypeDocument> = new Schema<UsageTypeDocument>({
   _id: Number,

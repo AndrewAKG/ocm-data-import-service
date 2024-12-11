@@ -1,14 +1,16 @@
 import { CheckinStatusType } from '@common/types/comment';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-type CheckinStatusTypeDocument = CheckinStatusType & Document;
+export type CheckinStatusTypeDocument = CheckinStatusType & { _id: number };
 
-const CheckinStatusTypeSchema: Schema<CheckinStatusTypeDocument> = new Schema<CheckinStatusTypeDocument>({
+export const CheckinStatusTypeSchema: Schema<CheckinStatusTypeDocument> = new Schema<CheckinStatusTypeDocument>({
   _id: Number,
   Title: { type: String, required: true },
   IsAutomatedCheckin: { type: Boolean, required: true },
   IsPositive: { type: Boolean, required: true }
 });
 
-const CheckinStatusTypeModel = mongoose.model<CheckinStatusTypeDocument>('CheckinStatusType', CheckinStatusTypeSchema);
-export { CheckinStatusTypeSchema, CheckinStatusTypeModel };
+export const CheckinStatusTypeModel = mongoose.model<CheckinStatusTypeDocument>(
+  'CheckinStatusType',
+  CheckinStatusTypeSchema
+);

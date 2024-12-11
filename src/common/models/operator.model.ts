@@ -1,8 +1,8 @@
 import { Operator } from '@common/types/operator';
 import { AddressInfoSchema } from './address-info.model'; // Import AddressInfoSchema
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export type OperatorDocument = Operator & Document;
+export type OperatorDocument = Operator & { _id: number };
 
 const OperatorSchema: Schema<OperatorDocument> = new Schema<OperatorDocument>({
   _id: Number,

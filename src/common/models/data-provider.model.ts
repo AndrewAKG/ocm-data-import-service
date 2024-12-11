@@ -1,8 +1,8 @@
 import { DataProvider } from '@common/types/data-provider';
 import { DataProviderStatusTypeSchema } from './data-provider-status-type.model'; // Import the schema
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export type DataProviderDocument = DataProvider & Document;
+export type DataProviderDocument = DataProvider & { _id: number };
 
 const DataProviderSchema: Schema<DataProviderDocument> = new Schema<DataProviderDocument>({
   _id: Number,

@@ -1,12 +1,11 @@
 import { CommentType } from '@common/types/comment';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-type CommentTypeDocument = CommentType & Document;
+export type CommentTypeDocument = CommentType & { _id: number };
 
-const CommentTypeSchema: Schema<CommentTypeDocument> = new Schema<CommentTypeDocument>({
+export const CommentTypeSchema: Schema<CommentTypeDocument> = new Schema<CommentTypeDocument>({
   _id: Number,
   Title: { type: String, required: true }
 });
 
-const CommentTypeModel = mongoose.model<CommentTypeDocument>('CommentType', CommentTypeSchema);
-export { CommentTypeSchema, CommentTypeModel };
+export const CommentTypeModel = mongoose.model<CommentTypeDocument>('CommentType', CommentTypeSchema);

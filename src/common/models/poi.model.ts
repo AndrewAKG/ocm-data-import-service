@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { AddressInfoSchema } from './address-info.model';
 import { ConnectionSchema } from './connection.model';
 import { MediaItemSchema } from './media-item.model';
@@ -10,7 +10,7 @@ import { StatusTypeSchema } from './status-type.model';
 import { SubmissionStatusSchema } from './submission-status.model';
 import { OperatorDocument } from './operator.model';
 
-type POIDocument = POI & Document;
+export type POIDocument = POI & { _id: string };
 
 // Partial Schemas for Reference Data
 const DataProviderSchema: Schema<Partial<DataProviderDocument>> = new Schema<Partial<DataProviderDocument>>({

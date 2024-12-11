@@ -1,10 +1,7 @@
-import { Schema, Document } from 'mongoose';
+import { Schema } from 'mongoose';
 import { AddressInfo } from '../types/address-info';
 
-type AddressInfoDocument = AddressInfo & Document;
-
-export const AddressInfoSchema: Schema = new Schema<AddressInfoDocument>({
-  _id: Number,
+export const AddressInfoSchema: Schema = new Schema<AddressInfo>({
   AddressLine1: { type: String, required: true },
   AddressLine2: { type: String, default: null },
   Town: { type: String, required: true },
