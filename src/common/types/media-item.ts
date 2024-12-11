@@ -1,8 +1,8 @@
 import { UserInfo } from './user';
 
 interface MediaItem {
-  ID: string;
-  ChargePointID: string;
+  ID: number;
+  ChargePointID: number;
   ItemURL: string;
   ItemThumbnailURL: string;
   Comment: string;

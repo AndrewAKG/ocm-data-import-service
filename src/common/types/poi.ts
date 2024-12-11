@@ -23,13 +23,11 @@ interface UsageType {
 interface POI {
   ID: number;
   UUID: string;
-  MediaItems: MediaItem[];
   IsRecentlyVerified: boolean;
   DateLastVerified: string;
   ParentChargePointID: number;
   UsageCost: string;
   AddressInfo: AddressInfo;
-  Connections: Connection[];
   NumberOfPoints: number;
   GeneralComments: string;
   DatePlanned: string;
@@ -44,6 +42,8 @@ interface POI {
   UsageTypeID: number;
   StatusTypeID: number;
   SubmissionStatusTypeID: number;
+  MediaItems: MediaItem[] | null;
+  Connections: Connection[] | null;
   UserComments?: Comment[] | null;
   DataProvider?: DataProvider | null;
   OperatorInfo?: Operator | null;

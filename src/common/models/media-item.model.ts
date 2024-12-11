@@ -1,12 +1,12 @@
 import { MediaItem } from '@common/types/media-item';
 import { UserInfoSchema } from './user-info.model'; // Import UserInfoSchema
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export type MediaItemDocument = MediaItem & { _id: number };
+export type MediaItemDocument = MediaItem & { _id: number; PoiID: string };
 
 export const MediaItemSchema: Schema<MediaItemDocument> = new Schema<MediaItemDocument>({
   _id: Number,
-  ChargePointID: { type: String, required: true },
+  PoiID: { type: String, required: true },
   ItemURL: { type: String, required: true },
   ItemThumbnailURL: { type: String, required: true },
   Comment: { type: String, required: false },

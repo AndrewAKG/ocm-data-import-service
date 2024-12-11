@@ -1,8 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { AddressInfoSchema } from './address-info.model';
-import { ConnectionSchema } from './connection.model';
 import { MediaItemSchema } from './media-item.model';
-import { CommentSchema } from './comment.model';
 import { POI } from '@common/types/poi';
 import { DataProviderDocument } from './data-provider.model';
 import { UsageTypeSchema } from './usage-type.model';
@@ -34,7 +32,6 @@ const POISchema: Schema<POIDocument> = new Schema<POIDocument>({
   ParentChargePointID: { type: Number, required: false },
   UsageCost: { type: String, required: false },
   AddressInfo: { type: AddressInfoSchema, required: true },
-  Connections: { type: [ConnectionSchema], default: [] },
   NumberOfPoints: { type: Number, required: false },
   GeneralComments: { type: String, required: false },
   DatePlanned: { type: String, required: false },
@@ -49,7 +46,6 @@ const POISchema: Schema<POIDocument> = new Schema<POIDocument>({
   UsageTypeID: { type: Number, required: false },
   StatusTypeID: { type: Number, required: false },
   SubmissionStatusTypeID: { type: Number, required: false },
-  UserComments: { type: [CommentSchema], default: [] },
   DataProvider: { type: DataProviderSchema, required: false },
   OperatorInfo: { type: OperatorInfoSchema, required: false },
   UsageType: { type: UsageTypeSchema, required: false },

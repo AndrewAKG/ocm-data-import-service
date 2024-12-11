@@ -1,7 +1,13 @@
-import { ConnectionDocument } from '@common/models/connection.model';
-import { Connection } from '@common/types/connection';
+import { ConnectionTypeDocument, ConnectionDocument } from '@common/models';
+import { Connection, ConnectionType } from '@common/types/connection';
 
-export const transformConnection = (connection: Connection): ConnectionDocument => ({
+export const transformConnectionType = (connectionType: ConnectionType): ConnectionTypeDocument => ({
+  ...connectionType,
+  _id: connectionType.ID
+});
+
+export const transformConnection = (PoiID: string, connection: Connection): ConnectionDocument => ({
   ...connection,
-  _id: connection.ID
+  _id: connection.ID,
+  PoiID
 });

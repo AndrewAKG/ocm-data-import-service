@@ -1,14 +1,17 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { UserInfoSchema } from './user-info.model';
 import { CommentTypeSchema } from './comment-type.model';
 import { CheckinStatusTypeSchema } from './checkin-status-type.model';
 import { Comment } from '@common/types/comment';
 
-export type CommentDocument = Comment & { _id: number };
+export interface CommentDocument extends Comment {
+  _id: string;
+  PoiID: string;
+}
 
 export const CommentSchema: Schema<CommentDocument> = new Schema<CommentDocument>({
-  _id: Number,
-  ChargePointID: { type: Number, required: true },
+  _id: String,
+  PoiID: { type: String, required: true },
   CommentTypeID: { type: Number, required: true },
   CommentType: { type: CommentTypeSchema, required: true },
   UserName: { type: String, required: true },

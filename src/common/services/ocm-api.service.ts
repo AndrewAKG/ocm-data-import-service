@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { commonConfig } from '@common/config/config';
 import { POI } from '@common/types/poi';
+import { ReferenceDataResponse } from '@common/types/ocm-api';
 
 let response;
 
-export const fetchOcmPoiData = async (boundingBox: string): Promise<POI[]> => {
+export const fetchOcmPoiData = async (partioningParams: object = {}): Promise<POI[]> => {
   try {
     response = await axios.get(`${commonConfig.ocmApiBaseUrl}/poi`, {
       params: {
-        boundingbox: boundingBox,
+        ...partioningParams,
         opendata: true,
         compact: true,
         maxresults: commonConfig.maxResultsPerApiCall
@@ -20,12 +21,12 @@ export const fetchOcmPoiData = async (boundingBox: string): Promise<POI[]> => {
 
     return response.data;
   } catch (error: any) {
-    console.error(`Error fetching results for bounding box ${JSON.stringify(boundingBox)}: ${error.message}`);
+    console.error(`Error fetching results for partioning params ${JSON.stringify(partioningParams)}: ${error.message}`);
     return [];
   }
 };
 
-export const fetchOcmReferenceData = async (): Promise<any[]> => {
+export const fetchOcmReferenceData = async (): Promise<ReferenceDataResponse> => {
   try {
     const response = await axios.get(`${commonConfig.ocmApiBaseUrl}/referencedata`, {
       headers: {
@@ -36,6 +37,6 @@ export const fetchOcmReferenceData = async (): Promise<any[]> => {
     return response.data;
   } catch (error: any) {
     console.error('Error fetching ocm reference data', error.message);
-    return [];
+    throw new Error('Error fetching reference data');
   }
 };

@@ -1,10 +1,11 @@
 import mongoose, { Schema } from 'mongoose';
 import { Connection } from '@common/types/connection';
 
-export type ConnectionDocument = Connection & { _id: number };
+export type ConnectionDocument = Connection & { _id: number; PoiID: string };
 
 export const ConnectionSchema: Schema = new Schema<ConnectionDocument>({
   _id: Number,
+  PoiID: { type: String, required: true },
   ConnectionTypeID: { type: Number, required: true },
   Reference: { type: String, default: null },
   StatusTypeID: { type: Number, required: true },

@@ -3,7 +3,7 @@ import { connectToDB } from '@common/db/connect';
 import { createQueueService } from '@common/services/queue.service';
 import { commonConfig } from '@common/config/config';
 import { QueueMessage } from '@common/types/queue';
-import { Message } from 'amqplib';
+import { processMessage } from './services/message-processor.service';
 
 dotenv.config();
 const queueService = createQueueService(commonConfig.queueUri, commonConfig.queueName);
@@ -13,8 +13,10 @@ const queueService = createQueueService(commonConfig.queueUri, commonConfig.queu
   await connectToDB();
 
   const message: QueueMessage = {
-    boundingBoxQueryParam: ''
+    partitionParams: { boundingbox: '(-90,-90),(0,0)' }
   };
+
+  await processMessage(message);
   // const { connection, channel } = await queueService.connectToQueue();
 
   // // Consume messages

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 import { DataProviderStatusType } from '@common/types/data-provider';
 
 export type DataProviderStatusTypeDocument = DataProviderStatusType & { _id: number };
@@ -6,11 +6,6 @@ export type DataProviderStatusTypeDocument = DataProviderStatusType & { _id: num
 export const DataProviderStatusTypeSchema: Schema<DataProviderStatusTypeDocument> =
   new Schema<DataProviderStatusTypeDocument>({
     _id: Number,
-    Title: { String, required: true },
+    Title: { type: String, required: true },
     IsProviderEnabled: { type: Boolean, required: true }
   });
-
-export const DataProviderStatusTypeModel = mongoose.model<DataProviderStatusTypeDocument>(
-  'DataProviderStatusType',
-  DataProviderStatusTypeSchema
-);

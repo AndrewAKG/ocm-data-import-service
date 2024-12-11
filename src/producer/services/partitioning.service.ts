@@ -1,5 +1,5 @@
 import { BoundingBox, BoundingBoxModel } from '../models/bounding-box.model';
-import { fetchOcmPoiData } from '@common/services/ocm.service';
+import { fetchOcmPoiData } from '@common/services/ocm-api.service';
 import { generateDataHash } from '../utils/hashing-utils';
 import { QueueMessage, QueueService } from '@common/types/queue';
 import { constructBoundingBoxParam, subdivideBoundingBox } from '../utils/boundingbox-utils';
@@ -9,16 +9,16 @@ export const generateBoundingBoxes = async (
   boundingBox: BoundingBox,
   maxResults: number,
   boundingBoxesDataAccumulator: BoundingBox[] = [],
-  queueMessagesAccumulator: any[] = []
+  queueMessagesAccumulator: QueueMessage[] = []
 ): Promise<void> => {
-  const result = await fetchOcmPoiData(constructBoundingBoxParam(boundingBox));
+  const result = await fetchOcmPoiData({ boundingBox: constructBoundingBoxParam(boundingBox) });
   const resultCount = result.length;
 
   if (resultCount < maxResults) {
     const dataHash = generateDataHash(result, 'sha256');
     boundingBox.dataHash = dataHash;
     boundingBoxesDataAccumulator.push(boundingBox);
-    queueMessagesAccumulator.push({ boundingBoxQueryParam: constructBoundingBoxParam(boundingBox) });
+    queueMessagesAccumulator.push({ partitionParams: { boundingBox: constructBoundingBoxParam(boundingBox) } });
     console.log(constructBoundingBoxParam(boundingBox), resultCount);
     return;
   }
@@ -37,14 +37,14 @@ export const validateBoundingBox = async (
   maxResults: number,
   queueMessagesAccumulator: QueueMessage[] = []
 ) => {
-  const result = await fetchOcmPoiData(constructBoundingBoxParam(boundingBox));
+  const result = await fetchOcmPoiData({ boundingBox: constructBoundingBoxParam(boundingBox) });
   const resultCount = result.length;
 
   if (resultCount < maxResults) {
     const newDataHash = generateDataHash(result, 'sha256');
     if (newDataHash === boundingBox.dataHash) return;
 
-    queueMessagesAccumulator.push({ boundingBoxQueryParam: constructBoundingBoxParam(boundingBox) });
+    queueMessagesAccumulator.push({ partitionParams: { boundingBox: constructBoundingBoxParam(boundingBox) } });
   } else {
     const boundingBoxesDataAccumulator: BoundingBox[] = [];
     await generateBoundingBoxes(boundingBox, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator);
@@ -74,7 +74,7 @@ export const partitionOcmDataByBoundingBoxes = async (queueService: QueueService
 
     await generateBoundingBoxes(worldBoundingBox, maxResults, boundingBoxesDataAccumulator, queueMessagesAccumulator);
 
-    // await BoundingBoxModel.insertMany(boundingBoxesDataAccumulator);
+    await BoundingBoxModel.insertMany(boundingBoxesDataAccumulator);
     console.log(`Generated ${boundingBoxesDataAccumulator.length} bounding boxes.`);
   } else {
     console.log('found bounding boxes', existingBoundingBoxes.length);

@@ -8,5 +8,5 @@ export interface QueueService {
 }
 
 export interface QueueMessage {
-  boundingBoxQueryParam: string;
+  partitionParams: object;
 }
