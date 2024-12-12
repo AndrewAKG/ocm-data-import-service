@@ -8,8 +8,17 @@ import { BoundingBox, DataPartition, DataPartitionDocument, PartitionService } f
 
 const maxResults = commonConfig.maxResultsPerApiCall;
 
+/**
+ * take a bounding box, evaluates if its embedded data is less than max results we want to get from api
+ * if data is less than max => we calculate the hash and
+ * return the partition for insertion and a message for data processing
+ * if data is more => we sub divide the box and recurse
+ * @param boundingBox bounding box having the needed coordinates for constructing the params
+ * @param dataPartitionsAccumulator accumulator for data partition insertions
+ * @param queueMessagesAccumulator accumulator for messages to be sent to poi data processing queue
+ */
 const generateBoundingBoxes = async (
-  boundingBox: BoundingBox | DataPartition,
+  boundingBox: DataPartition,
   dataPartitionsAccumulator: DataPartition[],
   queueMessagesAccumulator: QueueMessage[]
 ) => {
@@ -45,12 +54,23 @@ const generateBoundingBoxes = async (
 
 export const createBoundingBoxPartitioningService = (): PartitionService => {
   return {
+    /**
+     * @returns existing data partitions
+     */
     getDataPartitions: async () => {
       const existingDataPartitions = await DataPartitionModel.find();
       console.log(`found ${existingDataPartitions.length} partitions`);
       return existingDataPartitions;
     },
 
+    /**
+     * process existing data partitions to see if new data is added by re-calculating data hash
+     * and comparing to existing data hash
+     * if data hash changed within the max results limit => update data partition and send message to queue
+     * if data changed outside the max results limit => we do same approach as before by dividing into smaller
+     * bounding boxes, where we save them to insert them and delete the parent bounding box for future processing
+     * @param existingDataPartitions
+     */
     checkForUpdatedPartitions: async (existingDataPartitions: DataPartitionDocument[]) => {
       const dataPartitionsInsertions: DataPartition[] = [];
       const dataPartitionsUpdates: DataPartitionDocument[] = [];
@@ -88,6 +108,9 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
       };
     },
 
+    /**
+     * partition data by using bounding boxes where we start with the world map bounding box
+     */
     partitionData: async () => {
       const dataPartitionsInsertionsAccumulator: DataPartition[] = [];
       const queueMessagesAccumulator: QueueMessage[] = [];

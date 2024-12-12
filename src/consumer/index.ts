@@ -20,9 +20,10 @@ const queueService = createRabbitMQQueueService(commonConfig.queueUri, commonCon
     const parsedMessage: QueueMessage = JSON.parse(msg.content.toString());
     console.log('Received message:', JSON.stringify(parsedMessage, null, 2));
     await processMessage(parsedMessage);
+    console.log('message processed successfully', JSON.stringify(parsedMessage, null, 2));
   });
 
-  // // Graceful shutdown
+  // Graceful shutdown
   process.on('SIGINT', async () => {
     await queueService.closeQueueConnection(connection);
     process.exit(0);

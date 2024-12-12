@@ -1,10 +1,19 @@
 import { BoundingBox } from '../types/data-partitioning';
 
+/**
+ * @param boundingBox containing coordinates needed
+ * @returns bounding box compatible format for ocm api
+ */
 export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
   const { topLeftCoordinates, bottomRightCoordinates } = boundingBox;
   return `(${topLeftCoordinates[0]},${topLeftCoordinates[1]}),(${bottomRightCoordinates[0]},${bottomRightCoordinates[1]})`;
 };
 
+/**
+ * splits bounding box into two equal halves horizontally or vertically
+ * @param boundingBox containing coordinates
+ * @returns two bounding boxes
+ */
 export const subdivideBoundingBox = (boundingBox: BoundingBox): BoundingBox[] => {
   const [lat1, lng1] = boundingBox.topLeftCoordinates;
   const [lat2, lng2] = boundingBox.bottomRightCoordinates;

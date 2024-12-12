@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import { commonConfig } from '@common/config/config';
 
 export const connectToDB = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://mongo:27017/ocm-data');
+    await mongoose.connect(commonConfig.mongoUri);
     console.log('Connected to MongoDB.');
   } catch (error: any) {
     console.error('Error connecting to MongoDB:', error.message);

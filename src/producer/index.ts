@@ -45,12 +45,18 @@ const partitionService = createBoundingBoxPartitioningService();
     ? await partitionService.checkForUpdatedPartitions(existingDataPartitions)
     : await partitionService.partitionData();
 
-  // write relevant partitions data
+  /**
+   * gather needed operations for calculated data partitions to save in db
+   */
   await bulkWrite(DataPartitionModel, dataPartitionsInsertions.map(insertOneBulkOperation));
   await bulkWrite(DataPartitionModel, dataPartitionsUpdates.map(updateOneBulkOperation));
   await bulkWrite(DataPartitionModel, dataPartitionsDeletions.map(deleteOneBulkOperation));
 
-  // Send messages to the queue for reliable horizontally scalable processing
+  /**
+   * Send messages to the queue for reliable horizontally scalable processing
+   * send parition params where consumer will process specific data partition
+   * according to the message received
+   */
   if (queueMessages.length) {
     const { channel, connection } = await queueService.connectToQueue();
 
@@ -59,5 +65,7 @@ const partitionService = createBoundingBoxPartitioningService();
     await channel.waitForConfirms();
     await queueService.closeQueueConnection(connection);
   }
+
+  // finish the execution
   process.exit(0);
 })();
