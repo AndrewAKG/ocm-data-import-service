@@ -22,6 +22,9 @@ interface DataPartitionsOperations {
 
 export interface PartitionService {
   getDataPartitions: () => Promise<DataPartitionDocument[]>;
-  partitionData: () => Promise<DataPartitionsOperations>;
-  checkForUpdatedPartitions: (dataPartitions: DataPartitionDocument[]) => Promise<DataPartitionsOperations>;
+  partitionData: (maxResults: number) => Promise<DataPartitionsOperations>;
+  checkForUpdatedPartitions: (
+    dataPartitions: DataPartitionDocument[],
+    maxResults: number
+  ) => Promise<DataPartitionsOperations>;
 }

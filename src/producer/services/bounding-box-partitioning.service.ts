@@ -3,10 +3,7 @@ import { fetchOcmPoiData } from '@common/services/ocm-api.service';
 import { generateDataHash } from '../utils/hashing-utils';
 import { QueueMessage } from '@common/types/queue';
 import { constructBoundingBoxParam, subdivideBoundingBox } from '../utils/boundingbox-utils';
-import { commonConfig } from '@common/config/config';
 import { BoundingBox, DataPartition, DataPartitionDocument, PartitionService } from '../types/data-partitioning';
-
-const maxResults = commonConfig.maxResultsPerApiCall;
 
 /**
  * take a bounding box, evaluates if its embedded data is less than max results we want to get from api
@@ -14,11 +11,13 @@ const maxResults = commonConfig.maxResultsPerApiCall;
  * return the partition for insertion and a message for data processing
  * if data is more => we sub divide the box and recurse
  * @param boundingBox bounding box having the needed coordinates for constructing the params
+ * @param maxResults max number of results per api call
  * @param dataPartitionsAccumulator accumulator for data partition insertions
  * @param queueMessagesAccumulator accumulator for messages to be sent to poi data processing queue
  */
 const generateBoundingBoxes = async (
   boundingBox: DataPartition,
+  maxResults: number,
   dataPartitionsAccumulator: DataPartition[],
   queueMessagesAccumulator: QueueMessage[]
 ) => {
@@ -48,7 +47,7 @@ const generateBoundingBoxes = async (
 
   // Run sequentially to avoid memory overload
   for (const subBox of subBoxes) {
-    await generateBoundingBoxes(subBox, dataPartitionsAccumulator, queueMessagesAccumulator);
+    await generateBoundingBoxes(subBox, maxResults, dataPartitionsAccumulator, queueMessagesAccumulator);
   }
 };
 
@@ -70,8 +69,9 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
      * if data changed outside the max results limit => we do same approach as before by dividing into smaller
      * bounding boxes, where we save them to insert them and delete the parent bounding box for future processing
      * @param existingDataPartitions
+     * @param maxResults max number of results per api call
      */
-    checkForUpdatedPartitions: async (existingDataPartitions: DataPartitionDocument[]) => {
+    checkForUpdatedPartitions: async (existingDataPartitions: DataPartitionDocument[], maxResults: number) => {
       const dataPartitionsInsertions: DataPartition[] = [];
       const dataPartitionsUpdates: DataPartitionDocument[] = [];
       const dataPartitionsDeletions: DataPartitionDocument[] = [];
@@ -95,7 +95,14 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
           console.log('data hash matches => skip partition');
         } else {
           console.log('data increased => split partition into smaller ones');
-          await generateBoundingBoxes(partition, dataPartitionsInsertions, queueMessages);
+
+          // Subdivide the bounding box
+          const subBoxes = subdivideBoundingBox(partition);
+
+          // Run sequentially to avoid memory overload
+          for (const subBox of subBoxes) {
+            await generateBoundingBoxes(subBox, maxResults, dataPartitionsInsertions, queueMessages);
+          }
           dataPartitionsDeletions.push(partition);
         }
       }
@@ -110,8 +117,9 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
 
     /**
      * partition data by using bounding boxes where we start with the world map bounding box
+     * @param maxResults max number of results per api call
      */
-    partitionData: async () => {
+    partitionData: async (maxResults: number) => {
       const dataPartitionsInsertionsAccumulator: DataPartition[] = [];
       const queueMessagesAccumulator: QueueMessage[] = [];
       console.log('Generating bounding boxes...');
@@ -121,7 +129,12 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
         bottomRightCoordinates: [90, 180]
       };
 
-      await generateBoundingBoxes(worldBoundingBox, dataPartitionsInsertionsAccumulator, queueMessagesAccumulator);
+      await generateBoundingBoxes(
+        worldBoundingBox,
+        maxResults,
+        dataPartitionsInsertionsAccumulator,
+        queueMessagesAccumulator
+      );
 
       return {
         dataPartitionsInsertions: dataPartitionsInsertionsAccumulator,
