@@ -6,7 +6,6 @@ import { DataPartitionModel } from '../../models/data-partition.model';
 import { generateDataHash } from '../../utils/hashing-utils';
 import { DataPartitionDocument } from '../../types/data-partitioning';
 import { fetchOcmPoiData } from '@common/services/ocm-api.service';
-import { commonConfig } from '@common/config/config';
 
 jest.mock('@common/services/ocm-api.service');
 jest.mock('../../utils/hashing-utils');

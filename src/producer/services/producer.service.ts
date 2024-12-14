@@ -1,34 +1,25 @@
 import dotenv from 'dotenv';
 import { createBoundingBoxPartitioningService } from '../services/bounding-box-partitioning.service';
-import { DataPartitionModel } from '../models/data-partition.model';
+import { PartitionService } from '../types/data-partitioning';
 import { connectToDB } from '@common/db/connect';
 import { createRabbitMQQueueService } from '@common/services/queue.service';
 import { commonConfig } from '@common/config/config';
-import { ingestReferenceData } from '@common/services/ingestion.service';
+import { createIngestionService } from '@common/services/ingestion.service';
 import { fetchOcmReferenceData } from '@common/services/ocm-api.service';
 import { transformReferenceData } from '@common/services/transformation.service';
-import {
-  bulkWrite,
-  deleteOneBulkOperation,
-  insertOneBulkOperation,
-  updateOneBulkOperation
-} from '@common/utils/mongoose';
-import { QueueMessage } from '@common/types/queue';
+import { QueueMessage, QueueService } from '@common/types/queue';
+import { IngestionService } from '@common/types/ingestion';
 
 dotenv.config();
 
-const queueService = createRabbitMQQueueService(commonConfig.queueUri, commonConfig.queueName);
-const partitionService = createBoundingBoxPartitioningService();
-const maxResults = commonConfig.maxResultsPerApiCall;
-
-const upsertReferenceData = async () => {
+const upsertReferenceData = async (ingestionService: IngestionService) => {
   try {
     console.log('Fetching and ingesting reference data...');
     const referenceData = await fetchOcmReferenceData();
     const transformedReferenceData = transformReferenceData(referenceData);
 
     // Ingest the reference data
-    await ingestReferenceData(transformedReferenceData);
+    await ingestionService.ingestReferenceData(transformedReferenceData);
     console.log('Reference data ingested successfully.');
   } catch (error) {
     console.error('Error during reference data ingestion:', error);
@@ -36,7 +27,11 @@ const upsertReferenceData = async () => {
   }
 };
 
-const manageDataPartitions = async () => {
+const manageDataPartitions = async (
+  partitionService: PartitionService,
+  maxResults: number,
+  ingestionService: IngestionService
+) => {
   try {
     console.log('Managing data partitions...');
     const existingDataPartitions = await partitionService.getDataPartitions();
@@ -50,11 +45,11 @@ const manageDataPartitions = async () => {
       ? await partitionService.checkForUpdatedPartitions(existingDataPartitions, maxResults)
       : await partitionService.partitionData(maxResults);
 
-    console.log('Performing bulk operations on data partitions...');
-    await bulkWrite(DataPartitionModel, dataPartitionsInsertions.map(insertOneBulkOperation));
-    await bulkWrite(DataPartitionModel, dataPartitionsUpdates.map(updateOneBulkOperation));
-    await bulkWrite(DataPartitionModel, dataPartitionsDeletions.map(deleteOneBulkOperation));
-
+    await ingestionService.ingestDataPartitions(
+      dataPartitionsInsertions,
+      dataPartitionsUpdates,
+      dataPartitionsDeletions
+    );
     return queueMessages;
   } catch (error) {
     console.error('Error during data partition management:', error);
@@ -62,7 +57,7 @@ const manageDataPartitions = async () => {
   }
 };
 
-const sendMessagesToQueue = async (queueMessages: QueueMessage[]) => {
+const sendMessagesToQueue = async (queueService: QueueService, queueMessages: QueueMessage[]) => {
   try {
     if (queueMessages.length) {
       console.log('Sending messages to the queue...');
@@ -84,15 +79,23 @@ export const main = async () => {
   try {
     console.log('Producer Service Started');
     await connectToDB();
-    await upsertReferenceData();
 
-    const queueMessages = await manageDataPartitions();
-    await sendMessagesToQueue(queueMessages);
+    const ingestionService = createIngestionService();
+
+    // upsert reference data
+    await upsertReferenceData(ingestionService);
+
+    // partition data
+    const partitionService = createBoundingBoxPartitioningService();
+    const maxResults = commonConfig.maxResultsPerApiCall;
+    const queueMessages = await manageDataPartitions(partitionService, maxResults, ingestionService);
+
+    // send messages to processing queue
+    const queueService = createRabbitMQQueueService(commonConfig.queueUri, commonConfig.queueName);
+    await sendMessagesToQueue(queueService, queueMessages);
 
     console.log('Producer service execution completed successfully.');
-    process.exit(0);
   } catch (error) {
     console.error('Error in producer service:', error);
-    process.exit(1);
   }
 };
