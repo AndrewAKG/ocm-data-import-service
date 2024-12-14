@@ -1,7 +1,8 @@
 import { ConnectionType } from '@common/types/connection';
+import { DocumentId } from '@common/types/mongo';
 import mongoose, { Schema } from 'mongoose';
 
-export type ConnectionTypeDocument = ConnectionType & { _id: number };
+export type ConnectionTypeDocument = ConnectionType & DocumentId;
 
 export const ConnectionTypeSchema: Schema = new Schema<ConnectionTypeDocument>(
   {

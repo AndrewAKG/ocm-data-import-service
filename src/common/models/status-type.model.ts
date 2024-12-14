@@ -1,7 +1,8 @@
+import { DocumentId } from '@common/types/mongo';
 import { StatusType } from '@common/types/status-types';
 import mongoose, { Schema } from 'mongoose';
 
-export type StatusTypeDocument = StatusType & { _id: number };
+export type StatusTypeDocument = StatusType & DocumentId;
 
 export const StatusTypeSchema: Schema = new Schema<StatusTypeDocument>(
   {

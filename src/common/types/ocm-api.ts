@@ -15,8 +15,6 @@ export interface ReferenceDataResponse {
   Countries: Country[];
   CurrentTypes: SupplyType[];
   DataProviders: DataProvider[];
-  DataTypes: any;
-  MetadataGroups: string | null;
   Operators: Operator[];
   StatusTypes: StatusType[];
   SubmissionStatusTypes: SubmissionStatus[];

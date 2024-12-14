@@ -1,8 +1,11 @@
+import mongoose, { Schema } from 'mongoose';
 import { MediaItem } from '@common/types/media-item';
 import { UserInfoSchema } from './user-info.model'; // Import UserInfoSchema
-import mongoose, { Schema } from 'mongoose';
+import { DocumentId } from '@common/types/mongo';
 
-export type MediaItemDocument = MediaItem & { _id: number; PoiID: string };
+export interface MediaItemDocument extends MediaItem, DocumentId {
+  PoiID: string;
+}
 
 export const MediaItemSchema: Schema<MediaItemDocument> = new Schema<MediaItemDocument>(
   {

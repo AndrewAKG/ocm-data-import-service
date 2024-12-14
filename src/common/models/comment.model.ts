@@ -3,9 +3,9 @@ import { UserInfoSchema } from './user-info.model';
 import { CommentTypeSchema } from './comment-type.model';
 import { CheckinStatusTypeSchema } from './checkin-status-type.model';
 import { Comment } from '@common/types/comment';
+import { DocumentId } from '@common/types/mongo';
 
-export interface CommentDocument extends Comment {
-  _id: string;
+export interface CommentDocument extends Comment, DocumentId {
   PoiID: string;
 }
 

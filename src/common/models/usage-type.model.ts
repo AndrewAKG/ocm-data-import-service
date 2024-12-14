@@ -1,7 +1,8 @@
+import { DocumentId } from '@common/types/mongo';
 import { UsageType } from '@common/types/poi';
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export type UsageTypeDocument = UsageType & { _id: number };
+export type UsageTypeDocument = UsageType & DocumentId;
 
 export const UsageTypeSchema: Schema<UsageTypeDocument> = new Schema<UsageTypeDocument>(
   {

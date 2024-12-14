@@ -1,7 +1,8 @@
 import { ChargerType } from '@common/types/charger-type';
+import { DocumentId } from '@common/types/mongo';
 import mongoose, { Schema } from 'mongoose';
 
-export type ChargerTypeDocument = ChargerType & { _id: number };
+export type ChargerTypeDocument = ChargerType & DocumentId;
 
 export const ChargerTypeSchema: Schema = new Schema<ChargerTypeDocument>(
   {

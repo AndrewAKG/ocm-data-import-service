@@ -5,9 +5,9 @@ import { StatusTypeSchema } from './status-type.model';
 import { ChargerType } from '@common/types/charger-type';
 import { ChargerTypeSchema } from './charger-type.model';
 import { SupplyTypeSchema } from './supply-type.model';
+import { DocumentId } from '@common/types/mongo';
 
-export interface ConnectionDocument extends Connection {
-  _id: number;
+export interface ConnectionDocument extends Connection, DocumentId {
   PoiID: string;
   ChargerTypeID: number;
   ChargerType: ChargerType;

@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { main } from '../../services/producer.service';
 import { DataPartitionDocument, PartitionService } from '../../types/data-partitioning';
-import { DataPartitionModel } from '../../models/data-partition.model';
 import * as partitionService from '../../services/bounding-box-partitioning.service';
 import { TransformedReferenceData } from '@common/types/transformers';
 import { commonConfig } from '@common/config/config';
@@ -13,7 +12,6 @@ import * as queueService from '@common/services/queue.service';
 import * as transformationService from '@common/services/transformation.service';
 import * as ingestionService from '@common/services/ingestion.service';
 import * as ocmApiService from '@common/services/ocm-api.service';
-import * as mongooseUtils from '@common/utils/mongoose';
 
 jest.mock('../../services/bounding-box-partitioning.service');
 jest.mock('@common/db/connect');
@@ -63,8 +61,6 @@ describe('Producer Service', () => {
     Countries: [],
     CurrentTypes: [],
     DataProviders: [],
-    DataTypes: [],
-    MetadataGroups: null,
     Operators: [],
     StatusTypes: [],
     SubmissionStatusTypes: [],
@@ -136,8 +132,6 @@ describe('Producer Service', () => {
   });
 
   it('should handle bulk operations for data partitions', async () => {
-    const bulkWriteSpy = jest.spyOn(mongooseUtils, 'bulkWrite').mockResolvedValueOnce();
-
     jest.spyOn(dbConnect, 'connectToDB').mockResolvedValueOnce();
     jest.spyOn(ocmApiService, 'fetchOcmReferenceData').mockResolvedValueOnce(mockReferenceData);
     jest.spyOn(transformationService, 'transformReferenceData').mockReturnValueOnce(mockTransformedReferenceData);

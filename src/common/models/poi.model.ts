@@ -6,8 +6,9 @@ import { UsageTypeSchema } from './usage-type.model';
 import { StatusTypeSchema } from './status-type.model';
 import { SubmissionStatusSchema } from './submission-status-types.model';
 import { OperatorDocument } from './operator.model';
+import { DocumentId } from '@common/types/mongo';
 
-export type POIDocument = POI & { _id: string };
+export type POIDocument = POI & DocumentId;
 
 // Partial Schemas for Reference Data
 const POIDataProviderSchema: Schema<Partial<DataProviderDocument>> = new Schema<Partial<DataProviderDocument>>({

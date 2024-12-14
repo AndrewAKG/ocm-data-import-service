@@ -1,7 +1,8 @@
 import { CheckinStatusType } from '@common/types/comment';
+import { DocumentId } from '@common/types/mongo';
 import mongoose, { Schema } from 'mongoose';
 
-export type CheckinStatusTypeDocument = CheckinStatusType & { _id: number };
+export type CheckinStatusTypeDocument = CheckinStatusType & DocumentId;
 
 export const CheckinStatusTypeSchema: Schema<CheckinStatusTypeDocument> = new Schema<CheckinStatusTypeDocument>(
   {
