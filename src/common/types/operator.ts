@@ -6,10 +6,10 @@ interface Operator {
   PhonePrimaryContact?: string | null;
   PhoneSecondaryContact?: string | null;
   IsPrivateIndividual: boolean;
-  AddressInfo: AddressInfo;
-  BookingURL: string;
-  ContactEmail: string;
-  FaultReportEmail: string;
+  AddressInfo: AddressInfo | null;
+  BookingURL: string | null;
+  ContactEmail: string | null;
+  FaultReportEmail: string | null;
   IsRestrictedEdit: boolean;
   ID: number;
   Title: string;

@@ -50,7 +50,7 @@ export interface OCMApiQueryParams {
 
 export type POIDataResponse = POI[];
 
-export interface OCMApiService {
+export interface OcmApiService {
   /**
    * Fetches POI data from the OCM API.
    * @param partitioningParams - The partitioning parameters for the API request.

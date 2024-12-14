@@ -25,8 +25,8 @@ interface POI {
   UUID: string;
   IsRecentlyVerified: boolean;
   DateLastVerified: string;
-  ParentChargePointID: number;
-  UsageCost: string;
+  ParentChargePointID: number | null;
+  UsageCost: string | null;
   AddressInfo: AddressInfo;
   NumberOfPoints: number;
   GeneralComments: string | null;
@@ -36,7 +36,7 @@ interface POI {
   DataQualityLevel: number;
   DateCreated: string;
   DataProviderID: number;
-  DataProvidersReference: string;
+  DataProvidersReference: string | null;
   OperatorID: number;
   OperatorsReference: string;
   UsageTypeID: number;

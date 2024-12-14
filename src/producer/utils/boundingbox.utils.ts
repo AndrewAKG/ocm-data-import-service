@@ -11,10 +11,11 @@ export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
   return `(${topLeftCoordinates[0]},${topLeftCoordinates[1]}),(${bottomRightCoordinates[0]},${bottomRightCoordinates[1]})`;
 };
 
-export const constructPartitionParams = (boundingBox: BoundingBox): OCMApiQueryParams => {
+export const constructPartitionParams = (boundingBox: BoundingBox, maxResults: number): OCMApiQueryParams => {
   const boundingBoxParam = constructBoundingBoxParam(boundingBox);
   return {
     boundingbox: boundingBoxParam,
+    maxresults: maxResults,
     ...commonConfig.commonPartitioningParams
   };
 };

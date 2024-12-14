@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { POI } from '@common/types/poi';
-import { OCMApiQueryParams, OCMApiService, ReferenceDataResponse } from '@common/types/ocm-api';
+import { OCMApiQueryParams, OcmApiService, ReferenceDataResponse } from '@common/types/ocm-api';
 import { throwError, logError } from '@common/utils/error.utils';
 
-export const createOcmApiService = (ocmApiBaseUrl: string, ocmApiKey: string): OCMApiService => {
+export const createOcmApiService = (ocmApiBaseUrl: string, ocmApiKey: string): OcmApiService => {
   return {
     /**
      * Fetches POI data from the OCM API with optional partitioning parameters.

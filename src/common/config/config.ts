@@ -9,7 +9,6 @@ export const commonConfig = {
   commonPartitioningParams: {
     opendata: true,
     compact: true,
-    verbose: false,
-    maxresults: maxResultsPerApiCall
+    verbose: false
   }
 };

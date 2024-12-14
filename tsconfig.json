@@ -5,11 +5,15 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
     "paths": {
-      "@common/*": ["src/common/*"]
+      "@common/*": ["src/common/*"],
+      "@producer/*": ["src/producer/*"],
+      "@consumer/*": ["src/consumer/*"],
+      "@mocks/*": ["src/mocks/*"]
     }
   },
   "include": ["src/**/*"],

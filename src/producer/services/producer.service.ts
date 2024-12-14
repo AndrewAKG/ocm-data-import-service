@@ -1,16 +1,12 @@
-import dotenv from 'dotenv';
 import { PartitionService } from '../types/data-partitioning';
-import { connectToDB } from '@common/db/connect';
 import { commonConfig } from '@common/config/config';
 import { QueueMessage, QueueService } from '@common/types/queue';
 import { IngestionService } from '@common/types/ingestion';
-import { OCMApiService } from '@common/types/ocm-api';
+import { OcmApiService } from '@common/types/ocm-api';
 import { TransformService } from '@common/types/transform';
 
-dotenv.config();
-
 export const createProducerService = (
-  ocmApiService: OCMApiService,
+  ocmApiService: OcmApiService,
   partitionService: PartitionService,
   transformService: TransformService,
   ingestionService: IngestionService,
@@ -61,12 +57,12 @@ export const createProducerService = (
     try {
       if (queueMessages.length) {
         console.log('Sending messages to the queue...');
-        const { channel, connection } = await queueService.connectToQueue();
+        await queueService.connectToQueue();
 
-        queueMessages.forEach((message) => queueService.sendMessage(channel, JSON.stringify(message)));
+        queueMessages.forEach((message) => queueService.sendMessage(JSON.stringify(message)));
 
-        await channel.waitForConfirms();
-        await queueService.closeQueueConnection(connection);
+        await queueService.waitForConfirms();
+        await queueService.closeQueueConnection();
         console.log('Messages sent successfully.');
       }
     } catch (error) {
@@ -79,8 +75,6 @@ export const createProducerService = (
     main: async () => {
       try {
         console.log('Producer Service Started');
-        await connectToDB();
-
         // upsert reference data
         await upsertReferenceData();
 

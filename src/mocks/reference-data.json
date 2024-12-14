@@ -1,0 +1,122 @@
+{
+  "ChargerTypes": [
+    {
+      "Comments": "Over 2 kW, usually non-domestic socket type",
+      "IsFastChargeCapable": false,
+      "ID": 2,
+      "Title": "Level 2 : Medium (Over 2kW)"
+    }
+  ],
+  "ConnectionTypes": [
+    {
+      "FormalName": null,
+      "IsDiscontinued": false,
+      "IsObsolete": false,
+      "ID": 30,
+      "Title": "Tesla (Model S/X)"
+    }
+  ],
+  "CurrentTypes": [
+    {
+      "Description": "Alternating Current - Three Phase",
+      "ID": 20,
+      "Title": "AC (Three-Phase)"
+    }
+  ],
+  "Countries": [
+    {
+      "ISOCode": "US",
+      "ContinentCode": "NA",
+      "ID": 2,
+      "Title": "United States"
+    }
+  ],
+  "DataProviders": [
+    {
+      "WebsiteURL": "http://openchargemap.org",
+      "Comments": null,
+      "DataProviderStatusType": {
+        "IsProviderEnabled": true,
+        "ID": 1,
+        "Title": "Manual Data Entry"
+      },
+      "IsRestrictedEdit": false,
+      "IsOpenDataLicensed": true,
+      "IsApprovedImport": true,
+      "License": "Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "DateLastImported": null,
+      "ID": 1,
+      "Title": "Open Charge Map Contributors"
+    }
+  ],
+  "Operators": [
+    {
+      "WebsiteURL": "http://www.teslamotors.com",
+      "Comments": null,
+      "PhonePrimaryContact": null,
+      "PhoneSecondaryContact": null,
+      "IsPrivateIndividual": false,
+      "AddressInfo": null,
+      "BookingURL": null,
+      "ContactEmail": null,
+      "FaultReportEmail": null,
+      "IsRestrictedEdit": false,
+      "ID": 23,
+      "Title": "Tesla (Tesla-only charging)"
+    }
+  ],
+  "StatusTypes": [
+    {
+      "IsOperational": true,
+      "IsUserSelectable": true,
+      "ID": 50,
+      "Title": "Operational"
+    }
+  ],
+  "SubmissionStatusTypes": [
+    {
+      "IsLive": true,
+      "ID": 200,
+      "Title": "Submission Published"
+    }
+  ],
+  "UsageTypes": [
+    {
+      "IsPayAtLocation": false,
+      "IsMembershipRequired": true,
+      "IsAccessKeyRequired": true,
+      "ID": 4,
+      "Title": "Public - Membership Required"
+    }
+  ],
+  "UserCommentTypes": [
+    {
+      "ID": 10,
+      "Title": "General Comment"
+    },
+    {
+      "ID": 50,
+      "Title": "Important Notice (For Other Users)"
+    },
+    {
+      "ID": 100,
+      "Title": "Suggested Change (Note To Editors)"
+    },
+    {
+      "ID": 110,
+      "Title": "Suggested Changed (Actioned By Editor)"
+    },
+    {
+      "ID": 1000,
+      "Title": "Fault Report (Notice To Users And Operator)"
+    }
+  ],
+  "CheckinStatusTypes": [
+    {
+      "IsPositive": true,
+      "IsAutomatedCheckin": false,
+      "ID": 10,
+      "Title": "Charged Successfully"
+    }
+  ]
+}

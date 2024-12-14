@@ -1,4 +1,4 @@
-import { DataPartition, DataPartitionDocument } from 'src/producer/types/data-partitioning';
+import { DataPartition, DataPartitionDocument } from '@producer/types/data-partitioning';
 import {
   ChargerTypeModel,
   ConnectionTypeModel,
@@ -24,7 +24,7 @@ import {
   updateOneBulkOperation,
   upsertOneBulkOperation
 } from '../utils/mongoose.utils';
-import { DataPartitionModel } from '../../producer/models/data-partition.model';
+import { DataPartitionModel } from '@producer/models/data-partition.model';
 import { IngestionService } from '../types/ingestion';
 import { logError } from '@common/utils/error.utils';
 

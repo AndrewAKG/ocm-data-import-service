@@ -5,14 +5,14 @@ interface DataProviderStatusType {
 }
 
 interface DataProvider {
-  WebsiteURL: string;
-  Comments: string;
+  WebsiteURL: string | null;
+  Comments: string | null;
   DataProviderStatusType: DataProviderStatusType;
   IsRestrictedEdit: boolean;
   IsOpenDataLicensed: boolean;
   IsApprovedImport: boolean;
-  License: string;
-  DateLastImported: string;
+  License: string | null;
+  DateLastImported: string | null;
   ID: number;
   Title: string;
 }

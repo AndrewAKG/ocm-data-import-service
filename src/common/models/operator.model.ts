@@ -13,10 +13,10 @@ const OperatorSchema: Schema<OperatorDocument> = new Schema<OperatorDocument>({
   PhonePrimaryContact: { type: String, required: false, default: null },
   PhoneSecondaryContact: { type: String, required: false, default: null },
   IsPrivateIndividual: { type: Boolean, required: true },
-  AddressInfo: { type: AddressInfoSchema, required: true },
-  BookingURL: { type: String, required: true },
-  ContactEmail: { type: String, required: true },
-  FaultReportEmail: { type: String, required: true },
+  AddressInfo: { type: AddressInfoSchema, required: false, default: null },
+  BookingURL: { type: String, required: false },
+  ContactEmail: { type: String, required: false },
+  FaultReportEmail: { type: String, required: false },
   IsRestrictedEdit: { type: Boolean, required: true }
 });
 

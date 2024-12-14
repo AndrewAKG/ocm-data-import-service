@@ -3,7 +3,7 @@ import { StatusType } from './status-types';
 import { SupplyType } from './supply-type';
 
 interface ConnectionType {
-  FormalName: string;
+  FormalName: string | null;
   IsDiscontinued: boolean;
   IsObsolete: boolean;
   ID: number;
@@ -19,13 +19,13 @@ interface Connection {
   StatusType: StatusType;
   LevelID: number;
   Level: ChargerType;
-  Amps: number;
-  Voltage: number;
-  PowerKW: number;
+  Amps: number | null;
+  Voltage: number | null;
+  PowerKW: number | null;
   CurrentTypeID: number;
   CurrentType: SupplyType;
   Quantity: number;
-  Comments: string;
+  Comments: string | null;
 }
 
 export { Connection, ConnectionType };

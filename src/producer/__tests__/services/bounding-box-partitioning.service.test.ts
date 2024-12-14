@@ -5,7 +5,7 @@ import { createBoundingBoxPartitioningService } from '../../services/bounding-bo
 import { DataPartitionModel } from '../../models/data-partition.model';
 import { generateDataHash } from '../../utils/hashing.utils';
 import { DataPartitionDocument } from '../../types/data-partitioning';
-import { OCMApiService } from '@common/types/ocm-api';
+import { OcmApiService } from '@common/types/ocm-api';
 
 jest.mock('@common/services/ocm-api.service');
 jest.mock('../../utils/hashing.utils');
@@ -16,7 +16,7 @@ const maxResults = 10;
 
 describe('BoundingBoxPartitioningService', () => {
   let mongoServer: MongoMemoryServer;
-  const mockOCMApiService: jest.Mocked<OCMApiService> = {
+  const mockOcmApiService: jest.Mocked<OcmApiService> = {
     fetchOcmPoiData: jest.fn(),
     fetchOcmReferenceData: jest.fn()
   };
@@ -36,7 +36,7 @@ describe('BoundingBoxPartitioningService', () => {
     jest.clearAllMocks();
   });
 
-  const setupService = () => createBoundingBoxPartitioningService(mockOCMApiService);
+  const setupService = () => createBoundingBoxPartitioningService(mockOcmApiService, maxResults);
 
   describe('getDataPartitions', () => {
     it('should fetch all data partitions from the database', async () => {
@@ -80,7 +80,7 @@ describe('BoundingBoxPartitioningService', () => {
       ];
       await DataPartitionModel.insertMany(existingPartitions);
 
-      mockOCMApiService.fetchOcmPoiData.mockResolvedValue(new Array(maxResults / 2));
+      mockOcmApiService.fetchOcmPoiData.mockResolvedValue(new Array(maxResults / 2));
       mockGenerateDataHash.mockReturnValue('newHash');
 
       const updatesResult = await service.checkForUpdatedPartitions(existingPartitions, maxResults);
@@ -104,8 +104,8 @@ describe('BoundingBoxPartitioningService', () => {
         }
       ];
 
-      mockOCMApiService.fetchOcmPoiData.mockResolvedValueOnce(new Array(maxResults));
-      mockOCMApiService.fetchOcmPoiData.mockResolvedValue(new Array(maxResults / 2));
+      mockOcmApiService.fetchOcmPoiData.mockResolvedValueOnce(new Array(maxResults));
+      mockOcmApiService.fetchOcmPoiData.mockResolvedValue(new Array(maxResults / 2));
 
       const { dataPartitionsInsertions, dataPartitionsDeletions, messages } = await service.checkForUpdatedPartitions(
         existingPartitions,
@@ -122,7 +122,7 @@ describe('BoundingBoxPartitioningService', () => {
     it('should generate bounding boxes and create partition data', async () => {
       const service = setupService();
 
-      mockOCMApiService.fetchOcmPoiData.mockResolvedValue(new Array(maxResults / 2));
+      mockOcmApiService.fetchOcmPoiData.mockResolvedValue(new Array(maxResults / 2));
       mockGenerateDataHash.mockReturnValue('dataHash');
 
       const { dataPartitionsInsertions, messages } = await service.partitionData(maxResults);

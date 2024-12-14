@@ -20,7 +20,10 @@ const config: Config = {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '^@common/(.*)$': '<rootDir>/src/common/$1'
+    '^@common/(.*)$': '<rootDir>/src/common/$1',
+    '^@producer/(.*)$': '<rootDir>/src/producer/$1',
+    '^@consumer/(.*)$': '<rootDir>/src/consumer/$1',
+    '^@mocks/(.*)$': '<rootDir>/src/mocks/$1'
     // Add more mappings as per your `tsconfig.json`
   },
 
