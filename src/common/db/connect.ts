@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { commonConfig } from '@common/config/config';
-import { throwError } from '@common/utils/error';
+import { throwError } from '@common/utils/error.utils';
 
 export const connectToDB = async (): Promise<void> => {
   try {

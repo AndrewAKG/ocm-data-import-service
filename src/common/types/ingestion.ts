@@ -1,5 +1,5 @@
 import { DataPartition, DataPartitionDocument } from 'src/producer/types/data-partitioning';
-import { TransformedPOIData, TransformedReferenceData } from '../types/transformers';
+import { TransformedPOIData, TransformedReferenceData } from './transformers';
 
 export interface IngestionService {
   /**

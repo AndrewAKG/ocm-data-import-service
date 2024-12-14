@@ -3,7 +3,7 @@ import { DataProviderStatusTypeSchema } from './data-provider-status-type.model'
 import mongoose, { Schema } from 'mongoose';
 import { DocumentId } from '@common/types/mongo';
 
-export type DataProviderDocument = DataProvider & DocumentId;
+export type DataProviderDocument = Omit<DataProvider, 'ID'> & DocumentId;
 
 const DataProviderSchema: Schema<DataProviderDocument> = new Schema<DataProviderDocument>(
   {

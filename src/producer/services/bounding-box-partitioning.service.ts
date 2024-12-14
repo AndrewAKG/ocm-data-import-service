@@ -1,57 +1,62 @@
 import { DataPartitionModel } from '../models/data-partition.model';
-import { fetchOcmPoiData } from '@common/services/ocm-api.service';
-import { generateDataHash } from '../utils/hashing-utils';
+import { generateDataHash } from '../utils/hashing.utils';
 import { QueueMessage } from '@common/types/queue';
-import { constructBoundingBoxParam, subdivideBoundingBox } from '../utils/boundingbox-utils';
+import { constructBoundingBoxParam, constructPartitionParams, subdivideBoundingBox } from '../utils/boundingbox.utils';
 import { BoundingBox, DataPartition, DataPartitionDocument, PartitionService } from '../types/data-partitioning';
+import { OCMApiService } from '@common/types/ocm-api';
 
 /**
- * take a bounding box, evaluates if its embedded data is less than max results we want to get from api
- * if data is less than max => we calculate the hash and
- * return the partition for insertion and a message for data processing
- * if data is more => we sub divide the box and recurse
- * @param boundingBox bounding box having the needed coordinates for constructing the params
- * @param maxResults max number of results per api call
- * @param dataPartitionsAccumulator accumulator for data partition insertions
- * @param queueMessagesAccumulator accumulator for messages to be sent to poi data processing queue
+ * Factory function to create a bounding box partitioning service.
+ * Provides methods to get data partitions and manage them.
  */
-const generateBoundingBoxes = async (
-  boundingBox: DataPartition,
-  maxResults: number,
-  dataPartitionsAccumulator: DataPartition[],
-  queueMessagesAccumulator: QueueMessage[]
-) => {
-  const boundingBoxParitionParams = { boundingbox: constructBoundingBoxParam(boundingBox) };
-  const result = await fetchOcmPoiData(boundingBoxParitionParams);
-  const resultCount = result.length;
+export const createBoundingBoxPartitioningService = (ocmApiService: OCMApiService): PartitionService => {
+  /**
+   * Helper Function
+   * take a bounding box, evaluates if its embedded data is less than max results we want to get from api
+   * if data is less than max => we calculate the hash and
+   * return the partition for insertion and a message for data processing
+   * if data is more => we sub divide the box and recurse
+   * @param boundingBox bounding box having the needed coordinates for constructing the params
+   * @param maxResults max number of results per api call
+   * @param dataPartitionsAccumulator accumulator for data partition insertions
+   * @param queueMessagesAccumulator accumulator for messages to be sent to poi data processing queue
+   */
+  const generateBoundingBoxes = async (
+    boundingBox: DataPartition,
+    maxResults: number,
+    dataPartitionsAccumulator: DataPartition[],
+    queueMessagesAccumulator: QueueMessage[]
+  ) => {
+    const boundingBoxParitionParams = constructPartitionParams(boundingBox);
+    const result = await ocmApiService.fetchOcmPoiData(boundingBoxParitionParams);
+    const resultCount = result.length;
 
-  if (resultCount < maxResults) {
-    const dataHash = generateDataHash(result, 'sha256');
-    const dataPartition: DataPartition = {
-      ...boundingBox,
-      dataHash
-    };
-    dataPartitionsAccumulator.push(dataPartition);
+    if (resultCount < maxResults) {
+      const dataHash = generateDataHash(result, 'sha256');
+      const dataPartition: DataPartition = {
+        ...boundingBox,
+        dataHash
+      };
+      dataPartitionsAccumulator.push(dataPartition);
 
-    const queueMessage: QueueMessage = {
-      partitionParams: boundingBoxParitionParams
-    };
-    queueMessagesAccumulator.push(queueMessage);
+      const queueMessage: QueueMessage = {
+        partitionParams: boundingBoxParitionParams
+      };
+      queueMessagesAccumulator.push(queueMessage);
 
-    console.log(constructBoundingBoxParam(boundingBox), resultCount);
-    return;
-  }
+      console.log(constructBoundingBoxParam(boundingBox), resultCount);
+      return;
+    }
 
-  // Subdivide the bounding box
-  const subBoxes = subdivideBoundingBox(boundingBox);
+    // Subdivide the bounding box
+    const subBoxes = subdivideBoundingBox(boundingBox);
 
-  // Run sequentially to avoid memory overload
-  for (const subBox of subBoxes) {
-    await generateBoundingBoxes(subBox, maxResults, dataPartitionsAccumulator, queueMessagesAccumulator);
-  }
-};
+    // Run sequentially to avoid memory overload
+    for (const subBox of subBoxes) {
+      await generateBoundingBoxes(subBox, maxResults, dataPartitionsAccumulator, queueMessagesAccumulator);
+    }
+  };
 
-export const createBoundingBoxPartitioningService = (): PartitionService => {
   return {
     /**
      * @returns existing data partitions
@@ -79,8 +84,8 @@ export const createBoundingBoxPartitioningService = (): PartitionService => {
 
       // Process each partition sequentially to avoid overloading the memory
       for (const partition of existingDataPartitions) {
-        const boundingBoxPartitionParams = { boundingbox: constructBoundingBoxParam(partition) };
-        const result = await fetchOcmPoiData(boundingBoxPartitionParams);
+        const boundingBoxPartitionParams = constructPartitionParams(partition);
+        const result = await ocmApiService.fetchOcmPoiData(boundingBoxPartitionParams);
         const resultCount = result.length;
 
         if (resultCount < maxResults) {

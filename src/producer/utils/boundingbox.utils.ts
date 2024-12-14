@@ -1,4 +1,6 @@
+import { OCMApiQueryParams } from '@common/types/ocm-api';
 import { BoundingBox } from '../types/data-partitioning';
+import { commonConfig } from '@common/config/config';
 
 /**
  * @param boundingBox containing coordinates needed
@@ -7,6 +9,14 @@ import { BoundingBox } from '../types/data-partitioning';
 export const constructBoundingBoxParam = (boundingBox: BoundingBox): string => {
   const { topLeftCoordinates, bottomRightCoordinates } = boundingBox;
   return `(${topLeftCoordinates[0]},${topLeftCoordinates[1]}),(${bottomRightCoordinates[0]},${bottomRightCoordinates[1]})`;
+};
+
+export const constructPartitionParams = (boundingBox: BoundingBox): OCMApiQueryParams => {
+  const boundingBoxParam = constructBoundingBoxParam(boundingBox);
+  return {
+    boundingbox: boundingBoxParam,
+    ...commonConfig.commonPartitioningParams
+  };
 };
 
 /**

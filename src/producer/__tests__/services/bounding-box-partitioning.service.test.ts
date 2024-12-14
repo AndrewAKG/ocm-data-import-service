@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createBoundingBoxPartitioningService } from '../../services/bounding-box-partitioning.service';
 import { DataPartitionModel } from '../../models/data-partition.model';
-import { generateDataHash } from '../../utils/hashing-utils';
+import { generateDataHash } from '../../utils/hashing.utils';
 import { DataPartitionDocument } from '../../types/data-partitioning';
 import { fetchOcmPoiData } from '@common/services/ocm-api.service';
 
@@ -22,7 +22,7 @@ describe('BoundingBoxPartitioningService', () => {
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
     await mongoose.connect(uri);
-  });
+  }, 50000);
 
   afterAll(async () => {
     await mongoose.disconnect();

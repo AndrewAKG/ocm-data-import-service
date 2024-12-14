@@ -2,7 +2,7 @@ import { DocumentId } from '@common/types/mongo';
 import { SubmissionStatus } from '@common/types/poi';
 import mongoose, { Schema } from 'mongoose';
 
-export type SubmissionStatusDocument = SubmissionStatus & DocumentId;
+export type SubmissionStatusDocument = Omit<SubmissionStatus, 'ID'> & DocumentId;
 
 export const SubmissionStatusSchema: Schema<SubmissionStatusDocument> = new Schema<SubmissionStatusDocument>(
   {

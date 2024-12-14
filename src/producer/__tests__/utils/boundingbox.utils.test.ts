@@ -1,4 +1,4 @@
-import { constructBoundingBoxParam, subdivideBoundingBox } from '../../utils/boundingbox-utils';
+import { constructBoundingBoxParam, subdivideBoundingBox } from '../../utils/boundingbox.utils';
 import { BoundingBox } from '../../types/data-partitioning';
 
 describe('BoundingBox Utils', () => {

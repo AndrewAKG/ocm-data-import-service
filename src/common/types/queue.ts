@@ -1,4 +1,5 @@
 import { Connection, Message, ConfirmChannel } from 'amqplib';
+import { OCMApiQueryParams } from './ocm-api';
 
 export interface QueueService {
   connectToQueue: () => Promise<{ connection: Connection; channel: ConfirmChannel }>;
@@ -8,8 +9,5 @@ export interface QueueService {
 }
 
 export interface QueueMessage {
-  partitionParams: {
-    boundingbox: string;
-    // other partition params as needed
-  };
+  partitionParams: OCMApiQueryParams;
 }

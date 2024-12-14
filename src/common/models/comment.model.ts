@@ -1,12 +1,16 @@
 import mongoose, { Schema } from 'mongoose';
 import { UserInfoSchema } from './user-info.model';
-import { CommentTypeSchema } from './comment-type.model';
-import { CheckinStatusTypeSchema } from './checkin-status-type.model';
+import { CommentTypeDocument, CommentTypeSchema } from './comment-type.model';
+import { CheckinStatusTypeDocument, CheckinStatusTypeSchema } from './checkin-status-type.model';
 import { Comment } from '@common/types/comment';
 import { DocumentId } from '@common/types/mongo';
 
-export interface CommentDocument extends Comment, DocumentId {
+export interface CommentDocument
+  extends Omit<Comment, 'ID' | 'ChargePointID' | 'CommentType' | 'CheckinStatusType'>,
+    DocumentId {
   PoiID: string;
+  CommentType: CommentTypeDocument;
+  CheckinStatusType: CheckinStatusTypeDocument;
 }
 
 export const CommentSchema: Schema<CommentDocument> = new Schema<CommentDocument>({

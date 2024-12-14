@@ -14,10 +14,7 @@ import {
   POIModel,
   CommentModel,
   ConnectionModel,
-  MediaItemModel,
-  CommentDocument,
-  ConnectionDocument,
-  MediaItemDocument
+  MediaItemModel
 } from '../models';
 import { TransformedPOIData, TransformedReferenceData } from '../types/transformers';
 import {
@@ -26,70 +23,106 @@ import {
   insertOneBulkOperation,
   updateOneBulkOperation,
   upsertOneBulkOperation
-} from '../utils/mongoose';
+} from '../utils/mongoose.utils';
 import { DataPartitionModel } from '../../producer/models/data-partition.model';
 import { IngestionService } from '../types/ingestion';
+import { logError } from '@common/utils/error.utils';
 
+/**
+ * Factory function to create an ingestion service.
+ * Provides methods to ingest reference data, data partitions, and POI data into MongoDB.
+ */
 export const createIngestionService = (): IngestionService => {
+  /**
+   * Helper function to perform bulk upserts for a model and transformed data.
+   * @param model Mongoose model to perform the bulk operation on.
+   * @param data Transformed data to upsert.
+   */
+  const performBulkUpsert = async (model: any, data: any[]) => {
+    if (data.length > 0) {
+      await bulkWrite(model, data.map(upsertOneBulkOperation));
+    }
+  };
+
   return {
+    /**
+     * Ingest reference data into their respective collections via bulk upserts.
+     * @param transformedData Transformed reference data to ingest.
+     */
     ingestReferenceData: async (transformedData: TransformedReferenceData): Promise<void> => {
       try {
-        // Perform bulk upserts for each transformed data type
-        await bulkWrite(ChargerTypeModel, transformedData.ChargerTypes.map(upsertOneBulkOperation));
-        await bulkWrite(ConnectionTypeModel, transformedData.ConnectionTypes.map(upsertOneBulkOperation));
-        await bulkWrite(CheckinStatusTypeModel, transformedData.CheckinStatusTypes.map(upsertOneBulkOperation));
-        await bulkWrite(CountryModel, transformedData.Countries.map(upsertOneBulkOperation));
-        await bulkWrite(SupplyTypeModel, transformedData.CurrentTypes.map(upsertOneBulkOperation));
-        await bulkWrite(DataProviderModel, transformedData.DataProviders.map(upsertOneBulkOperation));
-        await bulkWrite(OperatorModel, transformedData.Operators.map(upsertOneBulkOperation));
-        await bulkWrite(StatusTypeModel, transformedData.StatusTypes.map(upsertOneBulkOperation));
-        await bulkWrite(SubmissionStatusModel, transformedData.SubmissionStatusTypes.map(upsertOneBulkOperation));
-        await bulkWrite(UsageTypeModel, transformedData.UsageTypes.map(upsertOneBulkOperation));
-        await bulkWrite(CommentTypeModel, transformedData.UserCommentTypes.map(upsertOneBulkOperation));
+        const bulkOperations = [
+          { model: ChargerTypeModel, data: transformedData.ChargerTypes },
+          { model: ConnectionTypeModel, data: transformedData.ConnectionTypes },
+          { model: CheckinStatusTypeModel, data: transformedData.CheckinStatusTypes },
+          { model: CountryModel, data: transformedData.Countries },
+          { model: SupplyTypeModel, data: transformedData.CurrentTypes },
+          { model: DataProviderModel, data: transformedData.DataProviders },
+          { model: OperatorModel, data: transformedData.Operators },
+          { model: StatusTypeModel, data: transformedData.StatusTypes },
+          { model: SubmissionStatusModel, data: transformedData.SubmissionStatusTypes },
+          { model: UsageTypeModel, data: transformedData.UsageTypes },
+          { model: CommentTypeModel, data: transformedData.UserCommentTypes }
+        ];
 
-        console.log('Bulk upsert of transformed data complete.');
+        // Perform bulk upserts for all data types
+        await Promise.all(bulkOperations.map(({ model, data }) => performBulkUpsert(model, data)));
+
+        console.log('Bulk upsert of transformed reference data complete.');
       } catch (error) {
-        console.error('Error during bulk upsert:', error);
+        logError(error, 'Error during bulk upsert of reference data');
       }
     },
 
+    /**
+     * Ingest data partitions (insertions, updates, and deletions) into the database.
+     * @param dataPartitionsInsertions Data partitions to insert.
+     * @param dataPartitionsUpdates Data partitions to update.
+     * @param dataPartitionsDeletions Data partitions to delete.
+     */
     ingestDataPartitions: async (
       dataPartitionsInsertions: DataPartition[],
       dataPartitionsUpdates: DataPartitionDocument[],
       dataPartitionsDeletions: DataPartitionDocument[]
-    ) => {
+    ): Promise<void> => {
       console.log('Performing bulk operations on data partitions...');
       await bulkWrite(DataPartitionModel, dataPartitionsInsertions.map(insertOneBulkOperation));
       await bulkWrite(DataPartitionModel, dataPartitionsUpdates.map(updateOneBulkOperation));
       await bulkWrite(DataPartitionModel, dataPartitionsDeletions.map(deleteOneBulkOperation));
     },
 
+    /**
+     * Ingest POI data and related entities into their respective collections.
+     * Handles large datasets by processing in chunks.
+     * @param transformedData Transformed POI data to ingest.
+     */
     ingestPOIData: async (transformedData: TransformedPOIData): Promise<void> => {
-      let splicedData;
+      const chunkSize = 10000;
 
-      while (transformedData.length) {
-        splicedData = transformedData.splice(0, 10000);
-        const POIs = splicedData.map((td) => td.POI);
-        const comments = splicedData.reduce((acc: CommentDocument[], curr) => {
-          acc = acc.concat(curr.Comments);
-          return acc;
-        }, []);
+      while (transformedData.length > 0) {
+        try {
+          const splicedData = transformedData.splice(0, chunkSize);
 
-        const connections = splicedData.reduce((acc: ConnectionDocument[], curr) => {
-          acc = acc.concat(curr.Connections);
-          return acc;
-        }, []);
+          // Separate POIs, comments, connections, and media items
+          const POIs = splicedData.map((td) => td.POI);
+          const comments = splicedData.flatMap((td) => td.Comments);
+          const connections = splicedData.flatMap((td) => td.Connections);
+          const mediaItems = splicedData.flatMap((td) => td.MediaItems);
 
-        const mediaItems = splicedData.reduce((acc: MediaItemDocument[], curr) => {
-          acc = acc.concat(curr.MediaItems);
-          return acc;
-        }, []);
+          const bulkOperations = [
+            { model: POIModel, data: POIs },
+            { model: CommentModel, data: comments },
+            { model: ConnectionModel, data: connections },
+            { model: MediaItemModel, data: mediaItems }
+          ];
 
-        await bulkWrite(POIModel, POIs.map(upsertOneBulkOperation));
-        await bulkWrite(CommentModel, comments.map(upsertOneBulkOperation));
-        await bulkWrite(ConnectionModel, connections.map(upsertOneBulkOperation));
-        await bulkWrite(MediaItemModel, mediaItems.map(upsertOneBulkOperation));
+          // Perform bulk upserts for each entity type
+          await Promise.all(bulkOperations.map(({ model, data }) => performBulkUpsert(model, data)));
+        } catch (error) {
+          logError(error, 'Error in upserting POI data');
+        }
       }
+      console.log('Bulk upsert of POI data complete.');
     }
   };
 };

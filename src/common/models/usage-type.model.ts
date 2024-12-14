@@ -2,7 +2,7 @@ import { DocumentId } from '@common/types/mongo';
 import { UsageType } from '@common/types/poi';
 import mongoose, { Schema } from 'mongoose';
 
-export type UsageTypeDocument = UsageType & DocumentId;
+export type UsageTypeDocument = Omit<UsageType, 'ID'> & DocumentId;
 
 export const UsageTypeSchema: Schema<UsageTypeDocument> = new Schema<UsageTypeDocument>(
   {

@@ -2,7 +2,7 @@ import { CommentType } from '@common/types/comment';
 import { DocumentId } from '@common/types/mongo';
 import mongoose, { Schema } from 'mongoose';
 
-export type CommentTypeDocument = CommentType & DocumentId;
+export type CommentTypeDocument = Omit<CommentType, 'ID'> & DocumentId;
 
 export const CommentTypeSchema: Schema<CommentTypeDocument> = new Schema<CommentTypeDocument>(
   {

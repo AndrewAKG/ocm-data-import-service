@@ -9,7 +9,7 @@ import { QueueService } from '@common/types/queue';
 import { IngestionService } from '@common/types/ingestion';
 import * as dbConnect from '@common/db/connect';
 import * as queueService from '@common/services/queue.service';
-import * as transformationService from '@common/services/transformation.service';
+import * as transformationService from '@common/services/transform.service';
 import * as ingestionService from '@common/services/ingestion.service';
 import * as ocmApiService from '@common/services/ocm-api.service';
 

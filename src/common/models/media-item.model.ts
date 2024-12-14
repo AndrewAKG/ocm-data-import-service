@@ -3,7 +3,7 @@ import { MediaItem } from '@common/types/media-item';
 import { UserInfoSchema } from './user-info.model'; // Import UserInfoSchema
 import { DocumentId } from '@common/types/mongo';
 
-export interface MediaItemDocument extends MediaItem, DocumentId {
+export interface MediaItemDocument extends Omit<MediaItem, 'ID' | 'ChargePointID'>, DocumentId {
   PoiID: string;
 }
 

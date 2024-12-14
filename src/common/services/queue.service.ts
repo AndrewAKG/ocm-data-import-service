@@ -1,6 +1,10 @@
 import amqp, { Connection, Message, ConfirmChannel } from 'amqplib';
 import { QueueService } from '../types/queue';
 
+/**
+ * Factory function to create a queue service.
+ * Provides methods to connect to queue, send message to queue, consume messages and close connection.
+ */
 export const createRabbitMQQueueService = (queueUri: string, queueName: string): QueueService => {
   return {
     // Connect to the queue

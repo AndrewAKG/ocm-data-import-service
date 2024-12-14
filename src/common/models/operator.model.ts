@@ -3,7 +3,7 @@ import { AddressInfoSchema } from './address-info.model'; // Import AddressInfoS
 import mongoose, { Schema } from 'mongoose';
 import { DocumentId } from '@common/types/mongo';
 
-export type OperatorDocument = Operator & DocumentId;
+export type OperatorDocument = Omit<Operator, 'ID'> & DocumentId;
 
 const OperatorSchema: Schema<OperatorDocument> = new Schema<OperatorDocument>({
   _id: Number,
