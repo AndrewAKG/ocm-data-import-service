@@ -7,7 +7,7 @@ import { ChargerTypeSchema } from './charger-type.model';
 import { SupplyTypeSchema } from './supply-type.model';
 import { DocumentId } from '@common/types/mongo';
 
-export interface ConnectionDocument extends Omit<Connection, 'ID'>, DocumentId {
+export interface ConnectionDocument extends Omit<Connection, 'ID' | 'Level' | 'LevelID'>, DocumentId {
   PoiID: string;
   ChargerTypeID: number;
   ChargerType: ChargerType;

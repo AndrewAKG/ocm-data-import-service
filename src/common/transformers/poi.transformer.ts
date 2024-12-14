@@ -3,17 +3,26 @@ import { SubmissionStatusDocument } from '@common/models/submission-status-types
 import { UsageTypeDocument } from '@common/models/usage-type.model';
 import { POI, SubmissionStatus, UsageType } from '@common/types/poi';
 
-export const transformSubmissionStatus = (submissionStatus: SubmissionStatus): SubmissionStatusDocument => ({
-  ...submissionStatus,
-  _id: submissionStatus.ID
-});
+export const transformSubmissionStatus = (submissionStatus: SubmissionStatus): SubmissionStatusDocument => {
+  const { ID, ...rest } = submissionStatus;
+  return {
+    ...rest,
+    _id: ID
+  };
+};
 
-export const transformUsageType = (usageType: UsageType): UsageTypeDocument => ({
-  ...usageType,
-  _id: usageType.ID
-});
+export const transformUsageType = (usageType: UsageType): UsageTypeDocument => {
+  const { ID, ...rest } = usageType;
+  return {
+    ...rest,
+    _id: ID
+  };
+};
 
-export const transformPOI = (poi: POI): POIDocument => ({
-  ...poi,
-  _id: poi.UUID
-});
+export const transformPOI = (poi: POI): POIDocument => {
+  const { UUID, ID, ...rest } = poi;
+  return {
+    ...rest,
+    _id: UUID
+  };
+};

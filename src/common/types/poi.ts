@@ -29,10 +29,10 @@ interface POI {
   UsageCost: string;
   AddressInfo: AddressInfo;
   NumberOfPoints: number;
-  GeneralComments: string;
-  DatePlanned: string;
-  DateLastConfirmed: string;
-  DateLastStatusUpdate: string;
+  GeneralComments: string | null;
+  DatePlanned: string | null;
+  DateLastConfirmed: string | null;
+  DateLastStatusUpdate: string | null;
   DataQualityLevel: number;
   DateCreated: string;
   DataProviderID: number;

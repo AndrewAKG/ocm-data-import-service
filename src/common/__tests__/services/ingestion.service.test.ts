@@ -12,8 +12,8 @@ import * as mongooseUtils from '@common/utils/mongoose.utils';
 import * as errorUtils from '@common/utils/error.utils';
 import { DataPartition, DataPartitionDocument } from '../../../producer/types/data-partitioning';
 
-jest.mock('@common/utils/mongoose');
-jest.mock('@common/utils/error');
+jest.mock('@common/utils/mongoose.utils');
+jest.mock('@common/utils/error.utils');
 
 describe('Ingestion Service', () => {
   const ingestionService = createIngestionService();
