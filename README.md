@@ -65,42 +65,99 @@ Database schemas are under src/common/models for all collections except data par
 
 ### Indices (what fields and why)
 
-1. AddressInfo
-   Fields: Town, StateOrProvince, CountryID, latitude, longitude
-   Purpose:
-   To enable filtering POI data based on commonly used location-based fields such as town, state, country, and geographic coordinates.
-2. ChargerType
-   Fields: IsFastChargeCapable
-   Purpose:
-   To allow filtering POI data by fast charging capability, which is a key requirement for users seeking high-speed charging stations.
-3. Comment
-   Fields: PoiID
-   Purpose:
-   To link user comments to a specific POI, enabling retrieval of reviews or feedback related to that POI.
-4. Connection
-   Fields: PoiID
-   Purpose:
-   To fetch connection details (e.g., charging specifications) related to a specific POI.
-5. MediaItem
-   Fields: PoiID
-   Purpose:
-   To associate media items (e.g., images, videos) with a specific POI, enhancing data with visual or informational content.
-6. Country
-   Fields: ISOCode
-   Purpose:
-   To facilitate filtering of POI data by country ISO code, supporting country-specific queries.
-7. SubmissionStatus
-   Fields: IsLive
-   Purpose:
-   To enable retrieval of only live and active POIs, ensuring the returned data is up-to-date.
-8. UsageType
-   Fields: IsPayAtLocation, IsMembershipRequired, IsAccessKeyRequired
-   Purpose:
-   To allow filtering of POIs based on usage types, such as whether payment, membership, or access keys are required.
+To optimize querying and filtering of POI data, the following indices are created on specific fields for each model. These indices improve database performance and ensure efficient data retrieval.
+
+**1. AddressInfo**
+
+- **Fields**:  
+  `Town`, `StateOrProvince`, `CountryID`, `latitude`, `longitude`
+- **Purpose**:  
+  Enables filtering POI data based on commonly used location-based fields such as town, state, country, and geographic coordinates.
+
+---
+
+**2. ChargerType**
+
+- **Fields**:  
+  `IsFastChargeCapable`
+- **Purpose**:  
+  Allows filtering POI data by fast charging capability, which is a key requirement for users seeking high-speed charging stations.
+
+---
+
+**3. Comment**
+
+- **Fields**:  
+  `PoiID`
+- **Purpose**:  
+  Links user comments to a specific POI, enabling retrieval of reviews or feedback related to that POI.
+
+---
+
+**4. Connection**
+
+- **Fields**:  
+  `PoiID`
+- **Purpose**:  
+  Fetches connection details (e.g., charging specifications) related to a specific POI.
+
+---
+
+**5. MediaItem**
+
+- **Fields**:  
+  `PoiID`
+- **Purpose**:  
+  Associates media items (e.g., images, videos) with a specific POI, enhancing the data with visual or informational content.
+
+---
+
+**6. Country**
+
+- **Fields**:  
+  `ISOCode`
+- **Purpose**:  
+  Facilitates filtering of POI data by country ISO code, supporting country-specific queries.
+
+---
+
+**7. SubmissionStatus**
+
+- **Fields**:  
+  `IsLive`
+- **Purpose**:  
+  Enables retrieval of only live and active POIs, ensuring that the returned data is up-to-date.
+
+---
+
+**8. UsageType**
+
+- **Fields**:  
+  `IsPayAtLocation`, `IsMembershipRequired`, `IsAccessKeyRequired`
+- **Purpose**:  
+  Allows filtering of POIs based on usage types, such as whether payment, membership, or access keys are required.
+
+---
 
 ## Local Development Guide
 
-## Deployment Instructions
+1. install pnpm if not installed on your computer `npm i -g pnpm`
+2. `pnpm install` inside project directory
+3. Make sure docker is running
+4. add `.env` file using `.env.example` as a reference
+5. run `docker-compose up --build -d` to build and run all services
+6. check logs of all services by removing `docker-compose logs -f` or specific service by running `docker-compose logs -f <service_name>`
+7. you can run tests using `pnpm test`
+
+## Deployment Instructions (AWS ECS Fargate)
+
+1. Create ECS Cluster, ECS Services (Service for consumer can scale based on number of messages in the queue), ECR Repository, Proper IAM Roles using IAC tool like CLoudformation or Terraform.
+2. Deploy the Cluster using aws cli configured with AWS Credentials.
+3. Create Task Definition file for each service specifying container configurations under `.aws/task-definitions`.
+4. Leverage aws cli commands in a `.github/workflows` github workflow to build images, push them to ECR Repos,
+   register task definitions to pushed docker image, deploy the ecs services to AWS ECS Cluster
+5. Make sure containers can talk to each other inside the cluster leveraging AWS VPC Components.
+6. AWS SQS and Mongo Atlas can be used instead of rabbitMQ and mongodb docker containers.
 
 ## GraphQL Integration Support (Not Implemented Just Elaboration)
 
