@@ -45,7 +45,7 @@ src/
 
 https://openchargemap.org/site/develop/api#/
 
-## GraphQL API Authentication/Authorization mechanisms (not implemented)
+## GraphQL API Auth mechanisms (not implemented)
 
 that depends on wether the api will be consumed through another microservice, in that case api-key authorization can
 be introduced in service to service communication
@@ -54,7 +54,7 @@ in case the api will be consumed using a client, authentication and authorizatio
 
 ## Database Structure
 
-Database schemas are under src/common/models for all collections except data partition collection under src/producer/models
+Database schemas are under `src/common/models` for all collections except data partition collection under `src/producer/models`
 
 ### Existing Relations
 
@@ -136,7 +136,7 @@ To optimize querying and filtering of POI data, the following indices are create
 
 ## Local Development Guide
 
-1. install pnpm if not installed on your computer `npm i -g pnpm`
+1. install pnpm if not installed on your computer here [pnpm](https://pnpm.io/)
 2. `pnpm install` inside project directory
 3. Make sure docker is running
 4. add `.env` file using `.env.example` as a reference
