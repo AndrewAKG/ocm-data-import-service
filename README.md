@@ -8,6 +8,10 @@ The service focuses on developing a scalable backend to process electric vehicle
 
 ![System Architecture Diagram](docs/assets/architecture-overview.jpeg)
 
+## Service Test Coverage
+
+![Service Test Coverage Diagram](docs/assets/test-coverage.png)
+
 ## Service Code Heirarchy
 
 ```
@@ -137,7 +141,7 @@ To optimize querying and filtering of POI data, the following indices are create
 3. Make sure docker is running
 4. add `.env` file using `.env.example` as a reference
 5. run `docker-compose up --build -d` to build and run all services
-6. check logs of all services by removing `docker-compose logs -f` or specific service by running `docker-compose logs -f <service_name>`
+6. check logs of all services by running `docker-compose logs -f` or specific service by running `docker-compose logs -f <service_name>`
 7. you can run tests using `pnpm test`
 
 ## Deployment Instructions (AWS ECS Fargate)
