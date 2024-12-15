@@ -41,6 +41,13 @@ src/
 
 https://openchargemap.org/site/develop/api#/
 
+## GraphQL API Authentication/Authorization mechanisms (not implemented)
+
+that depends on wether the api will be consumed through another microservice, in that case api-key authorization can
+be introduced in service to service communication
+
+in case the api will be consumed using a client, authentication and authorization can be introduced by json web tokens
+
 ## Database Structure
 
 Database schemas are under src/common/models for all collections except data partition collection under src/producer/models
@@ -74,16 +81,12 @@ To optimize querying and filtering of POI data, the following indices are create
 - **Purpose**:  
   Enables filtering POI data based on commonly used location-based fields such as town, state, country, and geographic coordinates.
 
----
-
 **2. ChargerType**
 
 - **Fields**:  
   `IsFastChargeCapable`
 - **Purpose**:  
   Allows filtering POI data by fast charging capability, which is a key requirement for users seeking high-speed charging stations.
-
----
 
 **3. Comment**
 
@@ -92,16 +95,12 @@ To optimize querying and filtering of POI data, the following indices are create
 - **Purpose**:  
   Links user comments to a specific POI, enabling retrieval of reviews or feedback related to that POI.
 
----
-
 **4. Connection**
 
 - **Fields**:  
   `PoiID`
 - **Purpose**:  
   Fetches connection details (e.g., charging specifications) related to a specific POI.
-
----
 
 **5. MediaItem**
 
@@ -110,16 +109,12 @@ To optimize querying and filtering of POI data, the following indices are create
 - **Purpose**:  
   Associates media items (e.g., images, videos) with a specific POI, enhancing the data with visual or informational content.
 
----
-
 **6. Country**
 
 - **Fields**:  
   `ISOCode`
 - **Purpose**:  
   Facilitates filtering of POI data by country ISO code, supporting country-specific queries.
-
----
 
 **7. SubmissionStatus**
 
@@ -128,16 +123,12 @@ To optimize querying and filtering of POI data, the following indices are create
 - **Purpose**:  
   Enables retrieval of only live and active POIs, ensuring that the returned data is up-to-date.
 
----
-
 **8. UsageType**
 
 - **Fields**:  
   `IsPayAtLocation`, `IsMembershipRequired`, `IsAccessKeyRequired`
 - **Purpose**:  
   Allows filtering of POIs based on usage types, such as whether payment, membership, or access keys are required.
-
----
 
 ## Local Development Guide
 
@@ -161,34 +152,80 @@ To optimize querying and filtering of POI data, the following indices are create
 
 ## GraphQL Integration Support (Not Implemented Just Elaboration)
 
-1. Schema Definition
+1. **Schema Definition**
    A GraphQL schema is defined to represent the structure of the imported POI data.
    Types for POI, AddressInfo, Connection, MediaItem, and other related reference data (e.g., ChargerTypes, StatusTypes) are created to reflect the relationships within the data.
 
-2. Data Fetching
+2. **Data Fetching**
    The GraphQL resolvers are implemented to fetch the POI data from MongoDB. The data can be queried either partially or fully based on the client’s request.
    Resolvers utilize the existing Mongoose models for POI and its related entities (e.g., AddressInfo, Connections).
    Filters and arguments such as limit, country, or id allow clients to retrieve relevant data dynamically.
 
-3. Query Flexibility
+3. **Query Flexibility**
    Clients can fetch only the required fields to minimize payload size
 
-4. Integration with Existing Services
+4. **Integration with Existing Services**
    The GraphQL layer integrates seamlessly with the existing Ingestion Service and MongoDB.
    Cached results and efficient querying ensure high performance when serving data.
 
-5. Endpoint Exposure
+5. **Endpoint Exposure**
    The GraphQL server runs alongside the existing services (e.g., Producer, and Consumer) in the application.
    The endpoint is exposed as /graphql within the service infrastructure.
 
 ## Scalability
 
-Scalability (horizontal scaling) can be acheived by increasing number of consumers which is responsible for data fetching/ingesting for specific data partition. To acheive that we need to partition data that OCM API has. Since OCM API doesn't support
-pagination, we could acheive that using a different technique. In this service we used boundingbox param to divide the world map
-by bounding boxes with max threshold for data retrieved using a bounding box. A producer service will be responsible for this and
-pushing the data partitions to a queue, which in returns is consumed by any number of consumers for concurrent and reliable import process.
+Scalability (horizontal scaling) can be acheived by increasing number of consumers which is responsible for data fetching/ingesting for specific data partition. To acheive that we need to partition data that OCM API has. Since OCM API doesn't support pagination, we could acheive that using a different technique.
+
+In this service we used boundingbox param to divide the world map by bounding boxes with max threshold for data retrieved using a bounding box. A producer service will be responsible for this and pushing the data partitions to a queue, which in returns are consumed by any number of consumers for concurrent and reliable import process.
 
 ## Monitoring and Logging
+
+To ensure effective monitoring and observability for the service, we can do the following:
+
+1. **Logging**
+
+- **Purpose**: Capture structured logs for troubleshooting and auditing.
+- **Key Areas**:
+  - **Partitioning**: Log the number of partitions created or updated.
+  - **API Calls**: Log latency, request status, and any errors from the OCM API.
+  - **Queue Operations**: Log messages sent to and consumed from RabbitMQ.
+- **Logging Tools**:
+  - **winston**: For reliable logging.
+
+2. **Metrics**
+
+- **Purpose**: Provide insights into system performance and behavior.
+- **Custom Metrics**:
+  - `active_partitions`: Number of active data partitions.
+  - `ocm_api_latency_seconds`: Histogram to track OCM API latency.
+  - `queue_message_depth`: Number of messages in RabbitMQ queues.
+- **Monitoring Tools**:
+  - **Prometheus**: For collecting and querying metrics.
+  - **Grafana**: For creating dashboards and visualizing metrics.
+
+3. **Error Tracking**
+
+- **Purpose**: Real-time detection and alerting of system errors.
+- **Error Tracking Tools**:
+  - **Sentry**: For capturing exceptions and error reporting.
+- **Critical Areas to Monitor**:
+  - OCM API failures.
+  - Queue connection errors.
+  - Data ingestion failures.
+
+4. **Health and Readiness Checks**
+
+- **Purpose**: Ensure the service is healthy and ready to process requests.
+- **Checks**:
+  - **Database Connectivity**: Verify connection to MongoDB.
+  - **Queue Connectivity**: Verify connection to RabbitMQ.
+  - **API Service Status**: Ensure the OCM API is reachable and responsive.
+
+5. **Monitoring Setup**
+
+- **Prometheus and Grafana**:
+  - **Prometheus**: Scrapes metrics exposed by the service on the `/metrics` endpoint.
+  - **Grafana**: Visualizes metrics such as API latency, partition count, and queue depth through dashboards.
 
 ## How API calls are minimized and payloads are optimized?
 
@@ -199,3 +236,11 @@ Payloads and network costs are optimized by using `compact=true` param which doe
 reference objects one time only in the producer service and saving only their reference IDs in POI data. By doing this we are decreasing the payload size and then can increase the max number of results we can get in single api call.
 
 ## Future Work and Improvements
+
+- DB Transactions for related data writes
+- Retries strategy
+- Use data from all providers with open data license
+- Dead letter queue and error handling
+- Add username/password to mongo
+- Better error tracing and performance metrics (monitoring)
+- GraphQL integration support
