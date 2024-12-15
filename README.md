@@ -45,9 +45,7 @@ https://openchargemap.org/site/develop/api#/
 
 Database schemas are under src/common/models for all collections except data partition collection under src/producer/models
 
-### Important relations:
-
-#### Existing Relations
+### Existing Relations
 
 - POIs has direct relations with all reference data using the following fields (already existing in the ocm data)
 
@@ -59,48 +57,72 @@ Database schemas are under src/common/models for all collections except data par
   SubmissionStatusTypeID: number; // is the poi live or not yet
 ```
 
-### Introduced Relations
+### Introduced Relations (during import process)
 
-- Relations introduced during import process
-  - separating comments from inside poi data and put it in separate collection (add reference in comment document using PoiID)
-  - separating media items from inside poi data and put it in separate collection (add reference in media item document using PoiID)
-  - separating connections (equipments) from inside poi data and put it in separate collection (add reference in connection document using PoiID)
+- separating comments from inside poi data and put it in separate collection (add reference in comment document using PoiID)
+- separating media items from inside poi data and put it in separate collection (add reference in media item document using PoiID)
+- separating connections (equipments) from inside poi data and put it in separate collection (add reference in connection document using PoiID)
 
 ### Indices (what fields and why)
 
-- Model: `Address Info`
-  Fields: `Town, StateOrProvince, CountryID, latitude, longitude`
-  Reason: User should be able to filter poi data by those commonly used fields
-- Model: `Charger Type`
-  Fields: `IsFastChargeCapable`
-  Reason: User should be able to filter pois by fast charging capability
-- Model: `Comment`
-  Fields: `PoiID`
-  Reason: When fetching comments related to specific poi
-- Model: `Connection`
-  Fields: `PoiID`
-  Reason: When fetching connections related to specific poi
-- Model: `MediaItem`
-  Fields: `PoiID`
-  Reason: When fetching connections related to specific poi
-- Model: `MediaItem`
-  Fields: `PoiID`
-  Reason: When fetching media items related to specific poi
-- Model: `Country`
-  Fields: `ISOCode`
-  Reason: should be able to fetch poi data by country iso code
-- Model: `SubmissionStatus`
-  Fields: `IsLive`
-  Reason: should be able to fetch live pois only
-- Model: `UsageType`
-  Fields: `IsPayAtLocation, IsMembershipRequired, IsAccessKeyRequired`
-  Reason: User should be able to filter pois by specific usage type
+1. AddressInfo
+   Fields: Town, StateOrProvince, CountryID, latitude, longitude
+   Purpose:
+   To enable filtering POI data based on commonly used location-based fields such as town, state, country, and geographic coordinates.
+2. ChargerType
+   Fields: IsFastChargeCapable
+   Purpose:
+   To allow filtering POI data by fast charging capability, which is a key requirement for users seeking high-speed charging stations.
+3. Comment
+   Fields: PoiID
+   Purpose:
+   To link user comments to a specific POI, enabling retrieval of reviews or feedback related to that POI.
+4. Connection
+   Fields: PoiID
+   Purpose:
+   To fetch connection details (e.g., charging specifications) related to a specific POI.
+5. MediaItem
+   Fields: PoiID
+   Purpose:
+   To associate media items (e.g., images, videos) with a specific POI, enhancing data with visual or informational content.
+6. Country
+   Fields: ISOCode
+   Purpose:
+   To facilitate filtering of POI data by country ISO code, supporting country-specific queries.
+7. SubmissionStatus
+   Fields: IsLive
+   Purpose:
+   To enable retrieval of only live and active POIs, ensuring the returned data is up-to-date.
+8. UsageType
+   Fields: IsPayAtLocation, IsMembershipRequired, IsAccessKeyRequired
+   Purpose:
+   To allow filtering of POIs based on usage types, such as whether payment, membership, or access keys are required.
 
 ## Local Development Guide
 
 ## Deployment Instructions
 
-## GrapghQL Integration Support
+## GraphQL Integration Support (Not Implemented Just Elaboration)
+
+1. Schema Definition
+   A GraphQL schema is defined to represent the structure of the imported POI data.
+   Types for POI, AddressInfo, Connection, MediaItem, and other related reference data (e.g., ChargerTypes, StatusTypes) are created to reflect the relationships within the data.
+
+2. Data Fetching
+   The GraphQL resolvers are implemented to fetch the POI data from MongoDB. The data can be queried either partially or fully based on the client’s request.
+   Resolvers utilize the existing Mongoose models for POI and its related entities (e.g., AddressInfo, Connections).
+   Filters and arguments such as limit, country, or id allow clients to retrieve relevant data dynamically.
+
+3. Query Flexibility
+   Clients can fetch only the required fields to minimize payload size
+
+4. Integration with Existing Services
+   The GraphQL layer integrates seamlessly with the existing Ingestion Service and MongoDB.
+   Cached results and efficient querying ensure high performance when serving data.
+
+5. Endpoint Exposure
+   The GraphQL server runs alongside the existing services (e.g., Producer, and Consumer) in the application.
+   The endpoint is exposed as /graphql within the service infrastructure.
 
 ## Scalability
 
