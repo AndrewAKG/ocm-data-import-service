@@ -13,7 +13,7 @@ export const connectToDB = async (mongoUri: string): Promise<void> => {
 export const closeDBConnection = async () => {
   try {
     await mongoose.disconnect();
-    console.log('Connected to MongoDB.');
+    console.log('Disconnected from MongoDB.');
   } catch (error: unknown) {
     throwError(error, 'Error disconnecting to MongoDB');
   }

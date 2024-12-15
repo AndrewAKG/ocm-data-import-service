@@ -6,7 +6,7 @@ The service focuses on developing a scalable backend to process electric vehicle
 
 ## Service High Level Architecture Overview
 
-![System Architecture Diagram](assets/Architecture_Overview.jpeg)
+![System Architecture Diagram](docs/assets/architecture-overview.jpeg)
 
 ## Service Code Heirarchy
 
@@ -37,9 +37,64 @@ src/
 │   ├── index.ts                 # Entry point for the Producer Service
 ```
 
-## API Documentation
+## OCM API Documentation
+
+https://openchargemap.org/site/develop/api#/
 
 ## Database Structure
+
+Database schemas are under src/common/models for all collections except data partition collection under src/producer/models
+
+### Important relations:
+
+#### Existing Relations
+
+- POIs has direct relations with all reference data using the following fields (already existing in the ocm data)
+
+```
+  DataProviderID: number; // data provider for the poi
+  OperatorID: number; // operator for the poi
+  UsageTypeID: number; // usage type for the poi (payAtLocation, membership required, etc..)
+  StatusTypeID: number; // is the poi operational or not yet
+  SubmissionStatusTypeID: number; // is the poi live or not yet
+```
+
+### Introduced Relations
+
+- Relations introduced during import process
+  - separating comments from inside poi data and put it in separate collection (add reference in comment document using PoiID)
+  - separating media items from inside poi data and put it in separate collection (add reference in media item document using PoiID)
+  - separating connections (equipments) from inside poi data and put it in separate collection (add reference in connection document using PoiID)
+
+### Indices (what fields and why)
+
+- Model: `Address Info`
+  Fields: `Town, StateOrProvince, CountryID, latitude, longitude`
+  Reason: User should be able to filter poi data by those commonly used fields
+- Model: `Charger Type`
+  Fields: `IsFastChargeCapable`
+  Reason: User should be able to filter pois by fast charging capability
+- Model: `Comment`
+  Fields: `PoiID`
+  Reason: When fetching comments related to specific poi
+- Model: `Connection`
+  Fields: `PoiID`
+  Reason: When fetching connections related to specific poi
+- Model: `MediaItem`
+  Fields: `PoiID`
+  Reason: When fetching connections related to specific poi
+- Model: `MediaItem`
+  Fields: `PoiID`
+  Reason: When fetching media items related to specific poi
+- Model: `Country`
+  Fields: `ISOCode`
+  Reason: should be able to fetch poi data by country iso code
+- Model: `SubmissionStatus`
+  Fields: `IsLive`
+  Reason: should be able to fetch live pois only
+- Model: `UsageType`
+  Fields: `IsPayAtLocation, IsMembershipRequired, IsAccessKeyRequired`
+  Reason: User should be able to filter pois by specific usage type
 
 ## Local Development Guide
 

@@ -6,7 +6,7 @@ import { createConsumerService } from './services/consumer.service';
 import { createTransformService } from '@common/services/transform.service';
 import { createIngestionService } from '@common/services/ingestion.service';
 import { createOcmApiService } from '@common/services/ocm-api.service';
-import { closeDBConnection, connectToDB } from '@common/utils/db.utils';
+import { connectToDB } from '@common/utils/db.utils';
 
 dotenv.config();
 
@@ -20,6 +20,4 @@ dotenv.config();
   const processorService = createProcesserService(ocmApiService, transformService, ingestionService);
   const consumerService = createConsumerService(queueService, processorService);
   await consumerService.main();
-
-  await closeDBConnection();
 })();

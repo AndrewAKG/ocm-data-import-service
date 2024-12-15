@@ -5,10 +5,10 @@ export const AddressInfoSchema: Schema = new Schema<AddressInfo>(
   {
     AddressLine1: { type: String, required: true },
     AddressLine2: { type: String, default: null },
-    Town: { type: String, required: true },
+    Town: { type: String, required: true, index: true },
     StateOrProvince: { type: String, required: true, index: true },
     Postcode: { type: String, required: true },
-    CountryID: { type: Number, required: true },
+    CountryID: { type: Number, required: true, index: true },
     Latitude: { type: Number, required: true, index: true },
     Longitude: { type: Number, required: true, index: true },
     ContactTelephone1: { type: String, default: null },
