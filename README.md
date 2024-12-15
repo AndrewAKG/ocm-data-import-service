@@ -2,9 +2,11 @@
 
 ## Service Goal
 
-Microservice for importing POI(Points of Interest) data from OCM(Open Charge Map) public APIs to be used later by other services in the system.
+The service focuses on developing a scalable backend to process electric vehicle (EV) charging points data efficiently. Its primary goals are to enable seamless data ingestion, transformation, and storage. This service aims to enhance the organization’s ability to handle growing datasets, and support strategic decision-making in EV infrastructure management.
 
-## Service Architecture
+## Service High Level Architecture Overview
+
+![System Architecture Diagram](assets/Architecture_Overview.png)
 
 ## Service Code Heirarchy
 
