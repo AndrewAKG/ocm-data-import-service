@@ -18,25 +18,26 @@ export const createProcesserService = (
   const loadReferenceData = async () => {
     if (!referenceDataCache) {
       console.log('Fetching reference data...');
+
       const referenceDataResponse = await ocmApiService.fetchOcmReferenceData();
       referenceDataCache = constructReferenceDataCacheMap(referenceDataResponse);
 
-      console.log('Reference data fetched and cached.');
+      console.log('Reference data fetched and cached');
     }
     return referenceDataCache;
   };
 
+  // Ensure the reference data is loaded once during service initialization
+  (async () => await loadReferenceData())();
+
   return {
     processMessage: async (message: QueueMessage) => {
-      // Ensure reference data is available in cache
-      const referenceData = await loadReferenceData();
-
       // fetch the poi data based on the partition params
       const POIData: POI[] = await ocmApiService.fetchOcmPoiData(message.partitionParams);
       console.log('data fetched successfully from OCM API');
 
       // transform poi data to db compatible format
-      const transformedPOIData = transformerService.transformPOIData(POIData, referenceData);
+      const transformedPOIData = transformerService.transformPOIData(POIData, referenceDataCache!);
       console.log('data transformed successfully');
 
       // ingest data in bulks

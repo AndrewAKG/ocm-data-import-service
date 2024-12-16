@@ -78,61 +78,58 @@ Database schemas are under `src/common/models` for all collections except data p
 
 To optimize querying and filtering of POI data, the following indices are created on specific fields for each model. These indices improve database performance and ensure efficient data retrieval.
 
-**1. AddressInfo**
+**1. POI**
 
-- **Fields**:  
-  `Town`, `StateOrProvince`, `CountryID`, `latitude`, `longitude`
+- **Fields**:
+  `AddressInfo.Town`, `AddressInfo.StateOrProvince`, `AddressInfo.CountryID`, `AddressInfo.latitude`, `AddressInfo.longitude`
 - **Purpose**:  
   Enables filtering POI data based on commonly used location-based fields such as town, state, country, and geographic coordinates.
 
-**2. ChargerType**
-
 - **Fields**:  
-  `IsFastChargeCapable`
+  `ChargerType.IsFastChargeCapable`
 - **Purpose**:  
   Allows filtering POI data by fast charging capability, which is a key requirement for users seeking high-speed charging stations.
 
-**3. Comment**
+- **Fields**:  
+  `SubmissionStatus.IsLive`
+- **Purpose**:  
+  Enables retrieval of only live and active POIs, ensuring that the returned data is up-to-date.
+
+- **Fields**:  
+  `StatusType.IsOperational`
+- **Purpose**:  
+  Enables retrieval of only operational POIs, ensuring that the returned data is up-to-date.
+
+- **Fields**:  
+  `UsageType.IsPayAtLocation`, `UsageType.IsMembershipRequired`, `UsageType.IsAccessKeyRequired`
+- **Purpose**:  
+  Allows filtering of POIs based on usage types, such as whether payment, membership, or access keys are required.
+
+- **Fields**:  
+  `OperatorID`
+- **Purpose**:  
+  Allows filtering of POIs based on specific operator.
+
+**2. Comment**
 
 - **Fields**:  
   `PoiID`
 - **Purpose**:  
   Links user comments to a specific POI, enabling retrieval of reviews or feedback related to that POI.
 
-**4. Connection**
+**3. Connection**
 
 - **Fields**:  
   `PoiID`
 - **Purpose**:  
   Fetches connection details (e.g., charging specifications) related to a specific POI.
 
-**5. MediaItem**
+**4. MediaItem**
 
 - **Fields**:  
   `PoiID`
 - **Purpose**:  
   Associates media items (e.g., images, videos) with a specific POI, enhancing the data with visual or informational content.
-
-**6. Country**
-
-- **Fields**:  
-  `ISOCode`
-- **Purpose**:  
-  Facilitates filtering of POI data by country ISO code, supporting country-specific queries.
-
-**7. SubmissionStatus**
-
-- **Fields**:  
-  `IsLive`
-- **Purpose**:  
-  Enables retrieval of only live and active POIs, ensuring that the returned data is up-to-date.
-
-**8. UsageType**
-
-- **Fields**:  
-  `IsPayAtLocation`, `IsMembershipRequired`, `IsAccessKeyRequired`
-- **Purpose**:  
-  Allows filtering of POIs based on usage types, such as whether payment, membership, or access keys are required.
 
 ## Local Development Guide
 
