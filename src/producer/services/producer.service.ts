@@ -4,6 +4,7 @@ import { QueueMessage, QueueService } from '@common/types/queue';
 import { IngestionService } from '@common/types/ingestion';
 import { OcmApiService } from '@common/types/ocm-api';
 import { TransformService } from '@common/types/transform';
+import { logError, throwError } from '@common/utils/error.utils';
 
 export const createProducerService = (
   ocmApiService: OcmApiService,
@@ -22,8 +23,7 @@ export const createProducerService = (
       await ingestionService.ingestReferenceData(transformedReferenceData);
       console.log('Reference data ingested successfully.');
     } catch (error) {
-      console.error('Error during reference data ingestion:', error);
-      throw error;
+      throwError(error, 'Error during reference data ingestion');
     }
   };
 
@@ -48,8 +48,7 @@ export const createProducerService = (
       );
       return queueMessages;
     } catch (error) {
-      console.error('Error during data partition management:', error);
-      throw error;
+      throwError(error, 'Error during data partition management');
     }
   };
 
@@ -66,8 +65,7 @@ export const createProducerService = (
         console.log('Messages sent successfully.');
       }
     } catch (error) {
-      console.error('Error during message sending:', error);
-      throw error;
+      logError(error, 'Error during message sending');
     }
   };
 
@@ -83,11 +81,11 @@ export const createProducerService = (
         const queueMessages = await manageDataPartitions(maxResults);
 
         // send messages to processing queue
-        await sendMessagesToQueue(queueMessages);
+        await sendMessagesToQueue(queueMessages!);
 
         console.log('Producer service execution completed successfully.');
       } catch (error) {
-        console.error('Error in producer service:', error);
+        logError(error, 'Error in producer service');
       }
     }
   };
