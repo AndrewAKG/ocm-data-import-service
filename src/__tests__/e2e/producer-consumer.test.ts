@@ -65,7 +65,6 @@ describe('E2E: Producer to Consumer to DB', () => {
     const partitionService = createBoundingBoxPartitioningService(mockOcmApiService, 10);
     const transformService = createTransformService();
     const ingestionService = createIngestionService();
-    const processorService = createProcesserService(mockOcmApiService, transformService, ingestionService);
 
     producerService = createProducerService(
       mockOcmApiService,
@@ -75,6 +74,10 @@ describe('E2E: Producer to Consumer to DB', () => {
       producerQueueService
     );
 
+    mockOcmApiService.fetchOcmReferenceData.mockResolvedValue(mockReferenceData as ReferenceDataResponse);
+    mockOcmApiService.fetchOcmPoiData.mockResolvedValue(mockPoiData as POIDataResponse);
+
+    const processorService = createProcesserService(mockOcmApiService, transformService, ingestionService);
     consumerService = createConsumerService(consumerQueueService, {
       ...processorService,
       processMessage: async (message) => {
@@ -93,9 +96,6 @@ describe('E2E: Producer to Consumer to DB', () => {
   });
 
   it('should partition data, send message, process message, and ingest into DB', async () => {
-    mockOcmApiService.fetchOcmReferenceData.mockResolvedValue(mockReferenceData as ReferenceDataResponse);
-    mockOcmApiService.fetchOcmPoiData.mockResolvedValue(mockPoiData as POIDataResponse);
-
     // Start consumer service
     consumerService.main();
 
