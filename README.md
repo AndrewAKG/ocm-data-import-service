@@ -6,11 +6,11 @@ The service focuses on developing a scalable backend to process electric vehicle
 
 ## Service High Level Architecture Overview
 
-![System Architecture Diagram](docs/assets/architecture-overview.jpeg)
+![System Architecture Diagram](assets/architecture-overview.jpeg)
 
 ## Service Test Coverage
 
-![Service Test Coverage Diagram](docs/assets/test-coverage.png)
+![Service Test Coverage Diagram](assets/test-coverage.png)
 
 ## Service Code Heirarchy
 
