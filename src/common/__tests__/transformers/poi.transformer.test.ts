@@ -4,6 +4,8 @@ import { SubmissionStatusDocument } from '@common/models/submission-status-types
 import { UsageTypeDocument } from '@common/models/usage-type.model';
 import { POIDocument } from '@common/models/poi.model';
 import mockPoiData from '@mocks/poi.json';
+import mockReferenceData from '@mocks/reference-data.json';
+import { constructReferenceDataCacheMap } from '@common/utils/cache.utils';
 
 describe('Transformers', () => {
   describe('transformSubmissionStatus', () => {
@@ -53,14 +55,29 @@ describe('Transformers', () => {
   describe('transformPOI', () => {
     it('should correctly transform a POI object to POIDocument', () => {
       const poi: POI = mockPoiData[0];
+      const referenceDataCache = constructReferenceDataCacheMap(mockReferenceData);
 
-      const { ID, UUID, ...rest } = poi;
+      const { UUID, ...rest } = poi;
       const expected: POIDocument = {
         _id: UUID,
-        ...rest
+        ...rest,
+        ChargerType: {
+          IsFastChargeCapable: false
+        },
+        StatusType: {
+          IsOperational: true
+        },
+        UsageType: {
+          IsPayAtLocation: false,
+          IsMembershipRequired: true,
+          IsAccessKeyRequired: true
+        },
+        SubmissionStatus: {
+          IsLive: true
+        }
       };
 
-      const result = transformPOI(poi);
+      const result = transformPOI(poi, referenceDataCache);
 
       expect(result).toEqual(expected);
     });

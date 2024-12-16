@@ -8,7 +8,7 @@ export const StatusTypeSchema: Schema = new Schema<StatusTypeDocument>(
   {
     _id: { type: Number },
     Title: { type: String, required: true },
-    IsOperational: { type: Boolean, required: true },
+    IsOperational: { type: Boolean, required: true, index: true },
     IsUserSelectable: { type: Boolean, required: true }
   },
   { collection: 'status_types' }

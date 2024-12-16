@@ -9,7 +9,7 @@ export const ChargerTypeSchema: Schema = new Schema<ChargerTypeDocument>(
     _id: Number,
     Title: { type: String, required: true },
     Comments: { type: String, required: true },
-    IsFastChargeCapable: { type: Boolean, required: true, index: true }
+    IsFastChargeCapable: { type: Boolean, required: true }
   },
   { collection: 'charger_types' }
 );

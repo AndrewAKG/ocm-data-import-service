@@ -8,9 +8,9 @@ export const UsageTypeSchema: Schema<UsageTypeDocument> = new Schema<UsageTypeDo
   {
     _id: Number,
     Title: { type: String, required: true },
-    IsPayAtLocation: { type: Boolean, required: true, index: true },
-    IsMembershipRequired: { type: Boolean, required: true, index: true },
-    IsAccessKeyRequired: { type: Boolean, required: true, index: true }
+    IsPayAtLocation: { type: Boolean, required: true },
+    IsMembershipRequired: { type: Boolean, required: true },
+    IsAccessKeyRequired: { type: Boolean, required: true }
   },
   { collection: 'usage_types' }
 );

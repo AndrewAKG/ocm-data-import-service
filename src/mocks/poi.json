@@ -1,53 +1,10 @@
 [
   {
-    "DataProvider": {
-      "WebsiteURL": "http://openchargemap.org",
-      "Comments": null,
-      "DataProviderStatusType": {
-        "IsProviderEnabled": true,
-        "ID": 1,
-        "Title": "Manual Data Entry"
-      },
-      "IsRestrictedEdit": false,
-      "IsOpenDataLicensed": true,
-      "IsApprovedImport": true,
-      "License": "Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0)",
-      "DateLastImported": null,
-      "ID": 1,
-      "Title": "Open Charge Map Contributors"
-    },
-    "OperatorInfo": {
-      "WebsiteURL": "http://www.teslamotors.com",
-      "Comments": null,
-      "PhonePrimaryContact": null,
-      "PhoneSecondaryContact": null,
-      "IsPrivateIndividual": false,
-      "AddressInfo": null,
-      "BookingURL": null,
-      "ContactEmail": null,
-      "FaultReportEmail": null,
-      "IsRestrictedEdit": false,
-      "ID": 23,
-      "Title": "Tesla (Tesla-only charging)"
-    },
-    "UsageType": {
-      "IsPayAtLocation": false,
-      "IsMembershipRequired": true,
-      "IsAccessKeyRequired": true,
-      "ID": 4,
-      "Title": "Public - Membership Required"
-    },
-    "StatusType": {
-      "IsOperational": true,
-      "IsUserSelectable": true,
-      "ID": 50,
-      "Title": "Operational"
-    },
-    "SubmissionStatus": {
-      "IsLive": true,
-      "ID": 200,
-      "Title": "Submission Published"
-    },
+    "DataProvider": null,
+    "OperatorInfo": null,
+    "UsageType": null,
+    "StatusType": null,
+    "SubmissionStatus": null,
     "UserComments": null,
     "PercentageSimilarity": null,
     "MediaItems": null,

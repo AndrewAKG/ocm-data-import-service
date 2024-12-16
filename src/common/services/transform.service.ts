@@ -15,7 +15,7 @@ import {
   transformConnection,
   transformMediaItem
 } from '@common/transformers';
-import { ReferenceDataResponse } from '@common/types/ocm-api';
+import { ReferenceDataResponse, ReferenceDataTransformServiceCacheMap } from '@common/types/ocm-api';
 import { POI } from '@common/types/poi';
 import { TransformService } from '@common/types/transform';
 import { TransformedPOIData, TransformedPOIDataItem, TransformedReferenceData } from '@common/types/transformers';
@@ -26,8 +26,11 @@ export const createTransformService = (): TransformService => {
    * @param POI - The POI object to transform.
    * @returns TransformedPOIDataItem - The transformed POI data.
    */
-  const transformPOIDataItem = (POI: POI): TransformedPOIDataItem => ({
-    POI: transformPOI(POI),
+  const transformPOIDataItem = (
+    POI: POI,
+    referenceData: ReferenceDataTransformServiceCacheMap
+  ): TransformedPOIDataItem => ({
+    POI: transformPOI(POI, referenceData),
     Comments: POI.UserComments?.map((comment) => transformComment(POI.UUID, comment)) || [],
     Connections: POI.Connections?.map((connection) => transformConnection(POI.UUID, connection)) || [],
     MediaItems: POI.MediaItems?.map((mediaItem) => transformMediaItem(POI.UUID, mediaItem)) || []
@@ -58,6 +61,7 @@ export const createTransformService = (): TransformService => {
      * @param POIs - The array of POIs to transform.
      * @returns TransformedPOIData - The transformed POI data.
      */
-    transformPOIData: (POIs: POI[]): TransformedPOIData => POIs.map((POI) => transformPOIDataItem(POI))
+    transformPOIData: (POIs: POI[], referenceData: ReferenceDataTransformServiceCacheMap): TransformedPOIData =>
+      POIs.map((POI) => transformPOIDataItem(POI, referenceData))
   };
 };

@@ -1,4 +1,4 @@
-import { ReferenceDataResponse } from './ocm-api';
+import { ReferenceDataResponse, ReferenceDataTransformServiceCacheMap } from './ocm-api';
 import { POI } from './poi';
 import { TransformedPOIData, TransformedReferenceData } from './transformers';
 
@@ -15,5 +15,5 @@ export interface TransformService {
    * @param POIs - The array of POIs to transform.
    * @returns TransformedPOIData - The transformed POI data.
    */
-  transformPOIData(POIs: POI[]): TransformedPOIData;
+  transformPOIData(POIs: POI[], referenceData: ReferenceDataTransformServiceCacheMap): TransformedPOIData;
 }

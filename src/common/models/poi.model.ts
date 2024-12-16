@@ -1,30 +1,70 @@
 import mongoose, { Schema } from 'mongoose';
 import { AddressInfoSchema } from './address-info.model';
 import { POI } from '@common/types/poi';
-import { DataProviderDocument } from './data-provider.model';
-import { UsageTypeSchema } from './usage-type.model';
-import { StatusTypeSchema } from './status-type.model';
-import { SubmissionStatusSchema } from './submission-status-types.model';
-import { OperatorDocument } from './operator.model';
+import { UsageTypeDocument } from './usage-type.model';
+import { StatusTypeDocument } from './status-type.model';
+import { SubmissionStatusDocument } from './submission-status-types.model';
 import { DocumentId } from '@common/types/mongo';
+import { DataProviderSchema } from './data-provider.model';
+import { OperatorSchema } from './operator.model';
+import { ChargerTypeDocument } from './charger-type.model';
 
-export type POIDocument = Omit<POI, 'UUID' | 'ID'> & DocumentId;
+export interface POIDocument extends Omit<POI, 'UUID' | 'UsageType' | 'SubmissionStatus' | 'StatusType'>, DocumentId {
+  ChargerType: {
+    IsFastChargeCapable: boolean;
+  };
+  UsageType: {
+    IsPayAtLocation: boolean;
+    IsMembershipRequired: boolean;
+    IsAccessKeyRequired: boolean;
+  };
+  SubmissionStatus: {
+    IsLive: boolean;
+  };
+  StatusType: {
+    IsOperational: boolean;
+  };
+}
 
-// Partial Schemas for Reference Data
-const POIDataProviderSchema: Schema<Partial<DataProviderDocument>> = new Schema<Partial<DataProviderDocument>>({
-  _id: { type: Number, required: true, index: true },
-  Title: { type: String, required: true }
-});
+// Partial Schema for Usage Type
+const POIUsageTypeSchema: Schema<Partial<UsageTypeDocument>> = new Schema<Partial<UsageTypeDocument>>(
+  {
+    IsPayAtLocation: { type: Boolean, required: true, index: true },
+    IsMembershipRequired: { type: Boolean, required: true, index: true },
+    IsAccessKeyRequired: { type: Boolean, required: true, index: true }
+  },
+  { _id: false }
+);
 
-const POIOperatorInfoSchema: Schema<Partial<OperatorDocument>> = new Schema<Partial<OperatorDocument>>({
-  _id: { type: Number, required: true, index: true },
-  Title: { type: String, required: true },
-  WebsiteURL: { type: String, required: true }
-});
+// Partial Schema for Charger Type
+const POIChargerTypeSchema: Schema<Partial<ChargerTypeDocument>> = new Schema<Partial<ChargerTypeDocument>>(
+  {
+    IsFastChargeCapable: { type: Boolean, required: true, index: true }
+  },
+  { _id: false }
+);
 
-// Main POI Schema
+// Partial Schema for Submission Status
+const POISubmissionStatusSchema: Schema<Partial<SubmissionStatusDocument>> = new Schema<
+  Partial<SubmissionStatusDocument>
+>(
+  {
+    IsLive: { type: Boolean, required: true, index: true }
+  },
+  { _id: false }
+);
+
+// Partial Schema for Status Type
+const POIStatusTypeSchema: Schema<Partial<StatusTypeDocument>> = new Schema<Partial<StatusTypeDocument>>(
+  {
+    IsOperational: { type: Boolean, required: true, index: true }
+  },
+  { _id: false }
+);
+
 const POISchema: Schema<POIDocument> = new Schema<POIDocument>({
   _id: String,
+  ID: { type: Number, required: true },
   IsRecentlyVerified: { type: Boolean, required: true },
   DateLastVerified: { type: String, required: true },
   ParentChargePointID: { type: Number, required: false },
@@ -39,16 +79,17 @@ const POISchema: Schema<POIDocument> = new Schema<POIDocument>({
   DateCreated: { type: String, required: true },
   DataProviderID: { type: Number, required: false },
   DataProvidersReference: { type: String, required: false },
-  OperatorID: { type: Number, required: false },
+  OperatorID: { type: Number, required: false, index: true },
   OperatorsReference: { type: String, required: false },
   UsageTypeID: { type: Number, required: false },
   StatusTypeID: { type: Number, required: false },
   SubmissionStatusTypeID: { type: Number, required: false },
-  DataProvider: { type: POIDataProviderSchema, required: false },
-  OperatorInfo: { type: POIOperatorInfoSchema, required: false },
-  UsageType: { type: UsageTypeSchema, required: false },
-  StatusType: { type: StatusTypeSchema, required: false },
-  SubmissionStatus: { type: SubmissionStatusSchema, required: false }
+  DataProvider: { type: DataProviderSchema, required: false },
+  OperatorInfo: { type: OperatorSchema, required: false },
+  UsageType: { type: POIUsageTypeSchema, required: true },
+  StatusType: { type: POIStatusTypeSchema, required: true },
+  SubmissionStatus: { type: POISubmissionStatusSchema, required: true },
+  ChargerType: { type: POIChargerTypeSchema, required: true }
 });
 
 export const POIModel = mongoose.model<POIDocument>('POI', POISchema);

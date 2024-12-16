@@ -8,7 +8,7 @@ export const SubmissionStatusSchema: Schema<SubmissionStatusDocument> = new Sche
   {
     _id: Number,
     Title: { type: String, required: true },
-    IsLive: { type: Boolean, required: true, index: true }
+    IsLive: { type: Boolean, required: true }
   },
   { collection: 'submission_status_types' }
 );

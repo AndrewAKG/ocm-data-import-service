@@ -8,6 +8,30 @@ import { POI, SubmissionStatus, UsageType } from './poi';
 import { StatusType } from './status-types';
 import { SupplyType } from './supply-type';
 
+export interface ReferenceDataTransformServiceCacheMap {
+  ChargerTypes: {
+    [key: number]: {
+      IsFastChargeCapable: boolean;
+    };
+  };
+  UsageTypes: {
+    [key: number]: {
+      IsPayAtLocation: boolean;
+      IsMembershipRequired: boolean;
+      IsAccessKeyRequired: boolean;
+    };
+  };
+  SubmissionStatusTypes: {
+    [key: number]: {
+      IsLive: boolean;
+    };
+  };
+  StatusTypes: {
+    [key: number]: {
+      IsOperational: boolean;
+    };
+  };
+}
 export interface ReferenceDataResponse {
   ChargerTypes: ChargerType[];
   ConnectionTypes: ConnectionType[];

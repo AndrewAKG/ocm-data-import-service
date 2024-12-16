@@ -5,7 +5,7 @@ import { DocumentId } from '@common/types/mongo';
 
 export type OperatorDocument = Omit<Operator, 'ID'> & DocumentId;
 
-const OperatorSchema: Schema<OperatorDocument> = new Schema<OperatorDocument>({
+export const OperatorSchema: Schema<OperatorDocument> = new Schema<OperatorDocument>({
   _id: Number,
   Title: { type: String, required: true },
   WebsiteURL: { type: String, required: true },

@@ -5,7 +5,7 @@ import { DocumentId } from '@common/types/mongo';
 
 export type DataProviderDocument = Omit<DataProvider, 'ID'> & DocumentId;
 
-const DataProviderSchema: Schema<DataProviderDocument> = new Schema<DataProviderDocument>(
+export const DataProviderSchema: Schema<DataProviderDocument> = new Schema<DataProviderDocument>(
   {
     _id: Number,
     Title: { type: String, required: true },
