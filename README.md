@@ -82,53 +82,53 @@ To optimize querying and filtering of POI data, the following indices are create
 
 - **Fields**:
   `AddressInfo.Town`, `AddressInfo.StateOrProvince`, `AddressInfo.CountryID`, `AddressInfo.latitude`, `AddressInfo.longitude`
-- **Purpose**:  
+  **Purpose**:  
   Enables filtering POI data based on commonly used location-based fields such as town, state, country, and geographic coordinates.
 
 - **Fields**:  
   `ChargerType.IsFastChargeCapable`
-- **Purpose**:  
+  **Purpose**:  
   Allows filtering POI data by fast charging capability, which is a key requirement for users seeking high-speed charging stations.
 
 - **Fields**:  
   `SubmissionStatus.IsLive`
-- **Purpose**:  
+  **Purpose**:  
   Enables retrieval of only live and active POIs, ensuring that the returned data is up-to-date.
 
 - **Fields**:  
   `StatusType.IsOperational`
-- **Purpose**:  
+  **Purpose**:  
   Enables retrieval of only operational POIs, ensuring that the returned data is up-to-date.
 
 - **Fields**:  
   `UsageType.IsPayAtLocation`, `UsageType.IsMembershipRequired`, `UsageType.IsAccessKeyRequired`
-- **Purpose**:  
+  **Purpose**:  
   Allows filtering of POIs based on usage types, such as whether payment, membership, or access keys are required.
 
 - **Fields**:  
   `OperatorID`
-- **Purpose**:  
+  **Purpose**:  
   Allows filtering of POIs based on specific operator.
 
 **2. Comment**
 
 - **Fields**:  
   `PoiID`
-- **Purpose**:  
+  **Purpose**:  
   Links user comments to a specific POI, enabling retrieval of reviews or feedback related to that POI.
 
 **3. Connection**
 
 - **Fields**:  
   `PoiID`
-- **Purpose**:  
+  **Purpose**:  
   Fetches connection details (e.g., charging specifications) related to a specific POI.
 
 **4. MediaItem**
 
 - **Fields**:  
   `PoiID`
-- **Purpose**:  
+  **Purpose**:  
   Associates media items (e.g., images, videos) with a specific POI, enhancing the data with visual or informational content.
 
 ## Local Development Guide
